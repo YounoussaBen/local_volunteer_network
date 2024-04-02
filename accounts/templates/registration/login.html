@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login | Local Volunteer Network{% endblock %}
+{% block body_class %}login-page{% endblock %}
+
+{% block content %}
+<!-- Login Header -->
+<section class="login-header bg-gradient-primary text-white py-5">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3" data-aos="fade-up">Welcome Back</h1>
+        <p class="lead mb-0 mx-auto" style="max-width: 700px;" data-aos="fade-up" data-aos-delay="100">
+            Sign in to your account to manage your volunteer experiences
+        </p>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Login Form Section -->
+<section class="login-form-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8" data-aos="fade-up">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="text-center mb-4">
+                            <div class="login-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <h2 class="h3 mt-3">Login to Your Account</h2>
+                            <p class="text-muted">Enter your credentials to access your account</p>
+                        </div>
+                        
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            {% if form.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Invalid username or password. Please try again.
+                                </div>
+                            {% endif %}
+                            
+                            {% if next %}
+                                <input type="hidden" name="next" value="{{ next }}">
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" class="form-control" placeholder="Enter your username" required>
+                                    <div class="invalid-feedback">
+                                        Please enter your username.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" class="form-control" placeholder="Enter your password" required>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button" data-target="{{ form.password.id_for_label }}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <div class="invalid-feedback">
+                                        Please enter your password.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberCheck" name="remember">
+                                    <label class="form-check-label" for="rememberCheck">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="{% url 'password_reset' %}" class="forgot-password">Forgot password?</a>
+                            </div>
+                            
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? <a href="{% url 'register' %}" class="fw-medium">Register now</a></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="login-help mt-4 p-4 bg-light rounded shadow-sm" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="h5 mb-3">
+                        <i class="fas fa-question-circle text-primary me-2"></i> Need Help?
+                    </h3>
+                    <p class="small mb-0">
+                        If you're having trouble logging in, please <a href="{% url 'contact' %}">contact our support team</a> for assistance. We're here to help you get connected with volunteer opportunities in Accra.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .login-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .forgot-password {
+        color: var(--primary);
+        font-size: 0.9rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    
+    .forgot-password:hover {
+        text-decoration: underline;
+        color: var(--primary-dark);
+    }
+    
+    .toggle-password {
+        cursor: pointer;
+    }
+    
+    /* Animation for form */
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Password visibility toggle
+        const togglePasswordButton = document.querySelector('.toggle-password');
+        
+        if (togglePasswordButton) {
+            togglePasswordButton.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordField = document.getElementById(targetId);
+                
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    passwordField.type = 'password';
+                    this.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            });
+        }
+        
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        }
+    });
+</script>
+{% endblock %}
