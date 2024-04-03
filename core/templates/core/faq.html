@@ -1,0 +1,555 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Frequently Asked Questions | Local Volunteer Network{% endblock %}
+{% block body_class %}faq-page{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="faq-header bg-gradient-primary text-white py-5">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3" data-aos="fade-up">Frequently Asked Questions</h1>
+        <p class="lead mb-0 mx-auto" style="max-width: 700px;" data-aos="fade-up" data-aos-delay="100">
+            Find answers to common questions about volunteering in Accra
+        </p>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- FAQ Search Section -->
+<section class="faq-search py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="search-box bg-white p-4 rounded-lg shadow-sm d-flex">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0">
+                            <i class="fas fa-search text-primary"></i>
+                        </span>
+                        <input type="text" id="faq-search" class="form-control form-control-lg border-0" placeholder="Search for your question...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Categories Section -->
+<section class="faq-categories py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="category-tabs">
+                    <ul class="nav nav-pills nav-justified mb-4" id="faqTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="general-tab" data-bs-toggle="pill" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
+                                <i class="fas fa-info-circle me-2"></i> General
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="volunteers-tab" data-bs-toggle="pill" data-bs-target="#volunteers" type="button" role="tab" aria-controls="volunteers" aria-selected="false">
+                                <i class="fas fa-user me-2"></i> For Volunteers
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="organizations-tab" data-bs-toggle="pill" data-bs-target="#organizations" type="button" role="tab" aria-controls="organizations" aria-selected="false">
+                                <i class="fas fa-building me-2"></i> For Organizations
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="technical-tab" data-bs-toggle="pill" data-bs-target="#technical" type="button" role="tab" aria-controls="technical" aria-selected="false">
+                                <i class="fas fa-cog me-2"></i> Technical
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Content Section -->
+<section class="faq-content py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="tab-content" id="faqTabContent">
+                    <!-- General FAQs -->
+                    <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                        <div class="faq-group" data-aos="fade-up">
+                            <h2 class="faq-group-title">General Questions</h2>
+                            
+                            <div class="accordion" id="generalAccordion">
+                                {% for faq in faqs %}
+                                    {% if forloop.counter <= 5 %}
+                                        <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                            <h2 class="accordion-header" id="heading-{{ faq.id }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ faq.id }}" aria-expanded="false" aria-controls="collapse-{{ faq.id }}">
+                                                    {{ faq.question }}
+                                                </button>
+                                            </h2>
+                                            <div id="collapse-{{ faq.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ faq.id }}" data-bs-parent="#generalAccordion">
+                                                <div class="accordion-body">
+                                                    {{ faq.answer|linebreaks }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% empty %}
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i> No FAQs found in this category.
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Volunteer FAQs -->
+                    <div class="tab-pane fade" id="volunteers" role="tabpanel" aria-labelledby="volunteers-tab">
+                        <div class="faq-group" data-aos="fade-up">
+                            <h2 class="faq-group-title">Questions for Volunteers</h2>
+                            
+                            <div class="accordion" id="volunteersAccordion">
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingV1">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseV1" aria-expanded="false" aria-controls="collapseV1">
+                                            How do I find volunteer opportunities that match my skills?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseV1" class="accordion-collapse collapse" aria-labelledby="headingV1" data-bs-parent="#volunteersAccordion">
+                                        <div class="accordion-body">
+                                            <p>Our platform uses a matching algorithm to recommend opportunities based on your profile. When you register, you'll be asked to provide information about your skills, interests, and availability.</p>
+                                            <p>You can also use the search and filter functions to browse all available opportunities and narrow down by location, skills required, cause areas, and more.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingV2">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseV2" aria-expanded="false" aria-controls="collapseV2">
+                                            What happens after I apply for a volunteer opportunity?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseV2" class="accordion-collapse collapse" aria-labelledby="headingV2" data-bs-parent="#volunteersAccordion">
+                                        <div class="accordion-body">
+                                            <p>After you submit an application, the organization will review your profile and application message. You'll receive a notification when they update your application status (accepted, declined, or pending).</p>
+                                            <p>If accepted, you'll be able to communicate with the organization through our platform to coordinate details. If declined, you can check other opportunities that might be a better fit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingV3">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseV3" aria-expanded="false" aria-controls="collapseV3">
+                                            Is there a minimum time commitment required?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseV3" class="accordion-collapse collapse" aria-labelledby="headingV3" data-bs-parent="#volunteersAccordion">
+                                        <div class="accordion-body">
+                                            <p>Time commitments vary depending on the opportunity. Some may be one-time events that last a few hours, while others might require regular commitment over weeks or months.</p>
+                                            <p>Each opportunity listing includes details about the time commitment required, helping you find opportunities that fit your schedule. You can also filter opportunities based on duration and frequency.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingV4">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseV4" aria-expanded="false" aria-controls="collapseV4">
+                                            Can I provide feedback about my volunteer experience?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseV4" class="accordion-collapse collapse" aria-labelledby="headingV4" data-bs-parent="#volunteersAccordion">
+                                        <div class="accordion-body">
+                                            <p>Yes! After completing a volunteer opportunity, you'll be prompted to provide feedback about your experience. This helps organizations improve and helps other volunteers make informed decisions.</p>
+                                            <p>Organizations can also provide feedback about volunteers, which can help build your volunteer profile and reputation on the platform.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingV5">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseV5" aria-expanded="false" aria-controls="collapseV5">
+                                            How do I track my volunteer hours?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseV5" class="accordion-collapse collapse" aria-labelledby="headingV5" data-bs-parent="#volunteersAccordion">
+                                        <div class="accordion-body">
+                                            <p>Your volunteer dashboard automatically tracks all your accepted and completed volunteer opportunities. For each completed opportunity, you'll see the estimated hours based on the opportunity details.</p>
+                                            <p>In the future, we plan to add a more detailed hour-tracking feature where both volunteers and organizations can log specific hours for better accuracy.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Organizations FAQs -->
+                    <div class="tab-pane fade" id="organizations" role="tabpanel" aria-labelledby="organizations-tab">
+                        <div class="faq-group" data-aos="fade-up">
+                            <h2 class="faq-group-title">Questions for Organizations</h2>
+                            
+                            <div class="accordion" id="organizationsAccordion">
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingO1">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseO1" aria-expanded="false" aria-controls="collapseO1">
+                                            How do I post a volunteer opportunity?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseO1" class="accordion-collapse collapse" aria-labelledby="headingO1" data-bs-parent="#organizationsAccordion">
+                                        <div class="accordion-body">
+                                            <p>After registering and completing your organization profile, you can post volunteer opportunities by clicking on the "Create Opportunity" button in your dashboard.</p>
+                                            <p>You'll need to provide details such as title, description, location, date/time, required skills, and the number of volunteers needed. The more detailed your listing, the better matches you'll find!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingO2">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseO2" aria-expanded="false" aria-controls="collapseO2">
+                                            Is there a limit to how many volunteer opportunities I can post?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseO2" class="accordion-collapse collapse" aria-labelledby="headingO2" data-bs-parent="#organizationsAccordion">
+                                        <div class="accordion-body">
+                                            <p>No, there is no limit to the number of opportunities you can post. You can create as many opportunities as you need to support your organization's mission.</p>
+                                            <p>We encourage organizations to keep their listings current by marking opportunities as "filled" or "completed" when appropriate.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingO3">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseO3" aria-expanded="false" aria-controls="collapseO3">
+                                            How do I review volunteer applications?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseO3" class="accordion-collapse collapse" aria-labelledby="headingO3" data-bs-parent="#organizationsAccordion">
+                                        <div class="accordion-body">
+                                            <p>When a volunteer applies for your opportunity, you'll receive a notification. You can review all applications in the "Applications" section of your dashboard.</p>
+                                            <p>For each application, you can view the volunteer's profile, including their skills, interests, and past volunteer experience. You can then accept or decline the application with an optional message to the volunteer.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingO4">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseO4" aria-expanded="false" aria-controls="collapseO4">
+                                            Can I verify the skills of volunteers?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseO4" class="accordion-collapse collapse" aria-labelledby="headingO4" data-bs-parent="#organizationsAccordion">
+                                        <div class="accordion-body">
+                                            <p>While our platform allows volunteers to list their skills, we do not verify these skills directly. However, you can review a volunteer's profile, past volunteer history, and any ratings or feedback they've received from other organizations.</p>
+                                            <p>We recommend conducting your own screening process for opportunities that require specific certifications or expertise. You can also use the messaging feature to ask volunteers additional questions before accepting their applications.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingO5">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseO5" aria-expanded="false" aria-controls="collapseO5">
+                                            How do I get verified as an organization?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseO5" class="accordion-collapse collapse" aria-labelledby="headingO5" data-bs-parent="#organizationsAccordion">
+                                        <div class="accordion-body">
+                                            <p>To get verified, please send us an email at verification@localvolunteer.net with the following information:</p>
+                                            <ul>
+                                                <li>Your organization's official registration documents</li>
+                                                <li>A brief description of your organization's mission and activities</li>
+                                                <li>Contact information for verification</li>
+                                            </ul>
+                                            <p>Our team will review your submission and typically complete the verification process within 5-7 business days.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Technical FAQs -->
+                    <div class="tab-pane fade" id="technical" role="tabpanel" aria-labelledby="technical-tab">
+                        <div class="faq-group" data-aos="fade-up">
+                            <h2 class="faq-group-title">Technical Questions</h2>
+                            
+                            <div class="accordion" id="technicalAccordion">
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingT1">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseT1" aria-expanded="false" aria-controls="collapseT1">
+                                            Is my personal information secure?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseT1" class="accordion-collapse collapse" aria-labelledby="headingT1" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>Yes, we take data security very seriously. We use encryption to protect your personal information and follow industry best practices for data security.</p>
+                                            <p>We only share your information with organizations when you apply for their volunteer opportunities. You can review our privacy policy for more details on how we collect, use, and protect your data.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingT2">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseT2" aria-expanded="false" aria-controls="collapseT2">
+                                            What devices and browsers are supported?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseT2" class="accordion-collapse collapse" aria-labelledby="headingT2" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>Our platform is designed to work on all modern devices, including desktops, laptops, tablets, and smartphones. We recommend using the latest version of Chrome, Firefox, Safari, or Edge for the best experience.</p>
+                                            <p>The platform is fully responsive, meaning it will adjust to fit your screen size regardless of the device you're using.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingT3">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseT3" aria-expanded="false" aria-controls="collapseT3">
+                                            I forgot my password. How do I reset it?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseT3" class="accordion-collapse collapse" aria-labelledby="headingT3" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>If you forgot your password, click on the "Forgot password?" link on the login page. Enter the email address associated with your account, and we'll send you instructions to reset your password.</p>
+                                            <p>If you don't receive the email within a few minutes, please check your spam folder. If you still need assistance, contact our support team at support@localvolunteer.net.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingT4">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseT4" aria-expanded="false" aria-controls="collapseT4">
+                                            How do I update my profile information?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseT4" class="accordion-collapse collapse" aria-labelledby="headingT4" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>To update your profile, log in to your account and click on your profile picture or username in the top-right corner. Select "Profile" from the dropdown menu.</p>
+                                            <p>On your profile page, click the "Edit Profile" button to update your personal information, skills, interests, and availability. Don't forget to save your changes when you're done.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3 shadow-sm faq-item">
+                                    <h2 class="accordion-header" id="headingT5">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseT5" aria-expanded="false" aria-controls="collapseT5">
+                                            How do I delete my account?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseT5" class="accordion-collapse collapse" aria-labelledby="headingT5" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>If you wish to delete your account, please go to your profile settings and select the "Account" tab. At the bottom of the page, you'll find an option to "Delete Account."</p>
+                                            <p>Please note that account deletion is permanent and will remove all your data from our platform, including your profile, application history, and messages. If you're just taking a break, consider deactivating your account instead, which can be reactivated later.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Support Section -->
+<section class="contact-support py-5 bg-light">
+    <div class="container" data-aos="fade-up">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="h3 mb-4">Still Have Questions?</h2>
+                <p class="mb-4">Can't find the answer you're looking for? Our friendly team is here to help.</p>
+                <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-envelope me-2"></i> Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .faq-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .search-box {
+        margin-top: -30px;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .faq-search input {
+        height: 60px;
+        font-size: 1.1rem;
+    }
+    
+    .faq-search input:focus {
+        box-shadow: none;
+    }
+    
+    .category-tabs .nav-link {
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        color: var(--dark);
+        background-color: #f8f9fa;
+        transition: var(--transition);
+    }
+    
+    .category-tabs .nav-link:hover {
+        background-color: #e9ecef;
+    }
+    
+    .category-tabs .nav-link.active {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .faq-group-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+    
+    .faq-group-title:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary);
+    }
+    
+    .accordion-item {
+        border-radius: var(--border-radius) !important;
+        transition: var(--transition);
+    }
+    
+    .accordion-item:hover {
+        transform: translateY(-3px);
+    }
+    
+    .accordion-button {
+        border-radius: var(--border-radius) !important;
+        font-weight: 500;
+        padding: 1.25rem;
+        box-shadow: none !important;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        color: var(--primary);
+        background-color: rgba(78, 84, 200, 0.05);
+    }
+    
+    .accordion-button:after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234e54c8'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+    
+    .faq-item.hidden {
+        display: none;
+    }
+    
+    .faq-highlight {
+        background-color: rgba(255, 220, 40, 0.4);
+    }
+    
+    @media (max-width: 767.98px) {
+        .category-tabs .nav-link {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('faq-search');
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                // Reset all items when search is cleared
+                faqItems.forEach(function(item) {
+                    item.classList.remove('hidden');
+                    
+                    // Reset highlight
+                    const questionText = item.querySelector('.accordion-button').textContent;
+                    item.querySelector('.accordion-button').innerHTML = questionText;
+                    
+                    const bodyElements = item.querySelectorAll('.accordion-body p, .accordion-body li');
+                    bodyElements.forEach(function(element) {
+                        element.innerHTML = element.textContent;
+                    });
+                });
+                return;
+            }
+            
+            // Filter and highlight items
+            faqItems.forEach(function(item) {
+                const questionButton = item.querySelector('.accordion-button');
+                const bodyElements = item.querySelectorAll('.accordion-body p, .accordion-body li');
+                
+                const questionText = questionButton.textContent.toLowerCase();
+                let bodyText = '';
+                bodyElements.forEach(function(element) {
+                    bodyText += element.textContent.toLowerCase() + ' ';
+                });
+                
+                if (questionText.includes(searchTerm) || bodyText.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                    
+                    // Highlight in question
+                    const highlightedQuestion = questionButton.textContent.replace(
+                        new RegExp(searchTerm, 'gi'),
+                        match => `<span class="faq-highlight">${match}</span>`
+                    );
+                    questionButton.innerHTML = highlightedQuestion;
+                    
+                    // Highlight in body
+                    bodyElements.forEach(function(element) {
+                        const highlightedBody = element.textContent.replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<span class="faq-highlight">${match}</span>`
+                        );
+                        element.innerHTML = highlightedBody;
+                    });
+                    
+                    // Expand the item if it contains the search term
+                    if (questionText.includes(searchTerm)) {
+                        questionButton.classList.remove('collapsed');
+                        questionButton.setAttribute('aria-expanded', 'true');
+                        item.querySelector('.accordion-collapse').classList.add('show');
+                    }
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
