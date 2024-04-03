@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Local Volunteer Network{% endblock %}
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-text" data-aos="fade-right" data-aos-delay="100">
+                <h1 class="mb-4">Make a <span class="text-white fw-bold">Difference</span> in Accra</h1>
+                <p class="mb-4">Connect with meaningful volunteer opportunities that match your skills and interests. Join our community to create positive impact together.</p>
+                <div class="d-flex flex-wrap gap-3 hero-buttons">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-user-plus"></i> Join Now
+                        </a>
+                        <a href="{% url 'opportunity_list' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-search"></i> Explore Opportunities
+                        </a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                        </a>
+                        <a href="{% url 'opportunity_list' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-search"></i> Explore Opportunities
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 hero-image mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
+                <div class="hero-image-container position-relative">
+                    <img src="{% static 'images/hero-image.png' %}" alt="Volunteers" class="img-fluid rounded shadow-lg">
+                    <div class="hero-image-overlay position-absolute"></div>
+                    <div class="hero-image-decoration-1"></div>
+                    <div class="hero-image-decoration-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats py-5">
+    <div class="container">
+        <div class="row g-4 stats-row">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="stats-item h-100">
+                    <div class="stats-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="stats-number animated-counter" data-target="{{ stats.volunteers }}">0</h3>
+                    <p class="stats-text">Volunteers</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="stats-item h-100">
+                    <div class="stats-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="stats-number animated-counter" data-target="{{ stats.organizations }}">0</h3>
+                    <p class="stats-text">Organizations</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="stats-item h-100">
+                    <div class="stats-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="stats-number animated-counter" data-target="{{ stats.opportunities }}">0</h3>
+                    <p class="stats-text">Opportunities</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="stats-item h-100">
+                    <div class="stats-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3 class="stats-number animated-counter" data-target="{{ stats.applications }}">0</h3>
+                    <p class="stats-text">Applications</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features bg-light-gray">
+    <div class="container">
+        <div class="section-title" data-aos="fade-up">
+            <h2>How It Works</h2>
+            <p class="text-muted">Our platform makes it easy to connect volunteers with opportunities in Accra</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-item h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3 class="feature-title">1. Create Your Profile</h3>
+                    <p class="mb-0">Sign up and create your profile as a volunteer or organization. Showcase your skills, interests, and availability.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-item h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="feature-title">2. Find Opportunities</h3>
+                    <p class="mb-0">Discover volunteer opportunities that match your skills and interests. Organizations can post their requirements.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-item h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3 class="feature-title">3. Make an Impact</h3>
+                    <p class="mb-0">Apply for opportunities, connect with organizations, and start making a meaningful difference in your community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Opportunities Section -->
+<section class="opportunities">
+    <div class="container">
+        <div class="section-title" data-aos="fade-up">
+            <h2>Recent Opportunities</h2>
+            <p class="text-muted">Discover the latest volunteer opportunities in Accra</p>
+        </div>
+        
+        <div class="row g-4">
+            {% if recent_opportunities %}
+                {% for opportunity in recent_opportunities %}
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                        <div class="card opportunity-card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ opportunity.title }}</h5>
+                                <div class="opportunity-location mb-2">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ opportunity.location }}</span>
+                                </div>
+                                <p class="card-text">{{ opportunity.description|truncatechars:100 }}</p>
+                                <div class="opportunity-meta">
+                                    {% for skill in opportunity.required_skills.all|slice:":3" %}
+                                        <span class="meta-item">{{ skill.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">{{ opportunity.start_date|date:"M d, Y" }}</small>
+                                    <a href="{% url 'opportunity_detail' opportunity.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                
+                <div class="text-center mt-4" data-aos="fade-up">
+                    <a href="{% url 'opportunity_list' %}" class="btn btn-primary">
+                        View All Opportunities <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            {% else %}
+                <div class="col-12" data-aos="fade-up">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No opportunities available at the moment. Please check back later.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials bg-light-gray">
+    <div class="container">
+        <div class="section-title" data-aos="fade-up">
+            <h2>Success Stories</h2>
+            <p class="text-muted">Hear from volunteers and organizations in our community</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-item h-100">
+                    <div class="testimonial-header">
+                        <div class="testimonial-meta">
+                            <h4>Kofi Mensah</h4>
+                            <p>Volunteer</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-text">
+                        <p>"Local Volunteer Network helped me find opportunities that align with my skills. I've been able to contribute to my community while developing professionally. The platform is user-friendly and efficient!"</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-item h-100">
+                    <div class="testimonial-header">
+                        <div class="testimonial-meta">
+                            <h4>Adwoa Boateng</h4>
+                            <p>Volunteer</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-text">
+                        <p>"I was looking for ways to give back to Accra, and this platform made it so easy. The matching system connected me with an education program that perfectly fits my schedule and interests."</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="testimonial-item h-100">
+                    <div class="testimonial-header">
+                        <div class="testimonial-meta">
+                            <h4>Hope Foundation</h4>
+                            <p>Organization</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-text">
+                        <p>"As a small non-profit, finding committed volunteers used to be challenging. Now we can easily post opportunities and connect with skilled individuals who are passionate about our cause."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta bg-gradient-primary text-white">
+    <div class="container text-center" data-aos="zoom-in">
+        <h2 class="mb-4 text-white">Ready to Make a Difference?</h2>
+        <p class="lead mb-4">Join our growing community of volunteers and organizations in Accra.</p>
+        {% if not user.is_authenticated %}
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'register_volunteer' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-user"></i> I Want to Volunteer
+                </a>
+                <a href="{% url 'register_organization' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-building"></i> Register Organization
+                </a>
+            </div>
+        {% else %}
+            <a href="{% url 'opportunity_list' %}" class="btn btn-light btn-lg">
+                <i class="fas fa-search"></i> Find Opportunities
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Placeholder images for demo. Replace with actual images in production. -->
+<script>
+    // Create a placeholder element if the static images are not available
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('img');
+        images.forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('hero-image.svg')) {
+                    img.src = 'https://via.placeholder.com/600x400?text=Volunteers+in+Accra';
+                } else if (img.src.includes('testimonial')) {
+                    img.src = 'https://via.placeholder.com/80?text=User';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
