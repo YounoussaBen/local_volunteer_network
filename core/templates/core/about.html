@@ -1,0 +1,505 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Local Volunteer Network{% endblock %}
+{% block body_class %}about-page{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="about-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-5 fw-bold mb-3">About Us</h1>
+                <p class="lead mb-0">Discover our mission to transform volunteerism in Accra and create a more engaged community.</p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
+                <img src="{% static 'images/about-header.svg' %}" alt="About Local Volunteer Network" class="img-fluid" style="max-height: 300px;">
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="our-story py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="image-wrapper position-relative">
+                    <img src="{% static 'images/about-story.jpg' %}" alt="Our Story" class="img-fluid rounded-lg shadow-lg">
+                    <div class="image-shape bg-primary"></div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="section-heading mb-4">
+                    <span class="subtitle">Our Story</span>
+                    <h2 class="section-title">How It All Started</h2>
+                </div>
+                <p>Local Volunteer Network was founded in 2023 with a simple yet powerful vision: to create a centralized platform that connects willing volunteers with meaningful opportunities in Accra.</p>
+                <p>We noticed that despite the strong spirit of volunteerism in our community, there was no efficient way for volunteers to find opportunities that matched their skills and interests. Similarly, organizations struggled to find dedicated volunteers for their initiatives.</p>
+                <p>Our founders, a group of tech enthusiasts and social impact advocates, decided to build a solution that would bridge this gap and make volunteering more accessible to everyone in Accra.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Vision Section -->
+<section class="mission-vision py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="subtitle">Purpose</span>
+            <h2 class="section-title">Our Mission & Vision</h2>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="mission-card h-100 bg-white rounded-lg p-4 shadow-sm">
+                    <div class="mission-icon mb-4">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="h4 mb-3">Our Mission</h3>
+                    <p>To facilitate meaningful connections between volunteers and organizations in Accra, creating a more engaged and supportive community through the power of volunteerism.</p>
+                    <p>We aim to make volunteering accessible to everyone, regardless of their background, by providing a user-friendly platform that matches volunteers with opportunities that align with their skills, interests, and availability.</p>
+                    <p>We believe that by connecting people with causes they care about, we can create a positive impact that ripples throughout our community.</p>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="vision-card h-100 bg-white rounded-lg p-4 shadow-sm">
+                    <div class="vision-icon mb-4">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="h4 mb-3">Our Vision</h3>
+                    <p>We envision a future where volunteering is an integral part of life in Accra, where every citizen is empowered to contribute their skills and time to causes they care about.</p>
+                    <p>Our platform aims to be the go-to resource for volunteer engagement, fostering a culture of giving back and community support throughout Ghana.</p>
+                    <p>By 2026, we aim to have connected over 10,000 volunteers with organizations, creating a network of active citizens who are committed to making Accra a better place for all.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values Section -->
+<section class="core-values py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="subtitle">What We Stand For</span>
+            <h2 class="section-title">Our Core Values</h2>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="value-card text-center h-100 p-4">
+                    <div class="value-icon mb-3">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="h5 mb-3">Community</h3>
+                    <p class="mb-0">We believe in the power of community and the impact that can be achieved when people come together for a common cause.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="value-card text-center h-100 p-4">
+                    <div class="value-icon mb-3">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3 class="h5 mb-3">Integrity</h3>
+                    <p class="mb-0">We uphold the highest standards of honesty, transparency, and ethical conduct in all our operations.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="value-card text-center h-100 p-4">
+                    <div class="value-icon mb-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="h5 mb-3">Inclusivity</h3>
+                    <p class="mb-0">We welcome volunteers and organizations from all backgrounds, promoting diversity and equal opportunities for all.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="value-card text-center h-100 p-4">
+                    <div class="value-icon mb-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="h5 mb-3">Impact</h3>
+                    <p class="mb-0">We are committed to creating meaningful, measurable positive change in our community through volunteer efforts.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Impact Statistics Section -->
+<section class="impact-stats py-5 bg-gradient-primary text-white">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="h2 text-white mb-3">Our Impact</h2>
+            <p class="lead">Together, we're making a difference in Accra</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card text-center p-4">
+                    <div class="stat-number animated-counter" data-target="{{ stats.volunteers }}">0</div>
+                    <div class="stat-label">Volunteers</div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-card text-center p-4">
+                    <div class="stat-number animated-counter" data-target="{{ stats.organizations }}">0</div>
+                    <div class="stat-label">Organizations</div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-card text-center p-4">
+                    <div class="stat-number animated-counter" data-target="{{ stats.opportunities }}">0</div>
+                    <div class="stat-label">Opportunities</div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="stat-card text-center p-4">
+                    <div class="stat-number animated-counter" data-target="{{ stats.applications }}">0</div>
+                    <div class="stat-label">Connections Made</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-section py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="subtitle">Meet The People</span>
+            <h2 class="section-title">Our Team</h2>
+            <p class="lead text-muted">Dedicated individuals working to make volunteering easier in Accra</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="team-card text-center">
+                    <div class="team-image mb-3">
+                        <img src="{% static 'images/team-1.jpg' %}" alt="Team Member" class="img-fluid rounded-circle">
+                    </div>
+                    <h3 class="team-name h5 mb-1">Kwame Mensah</h3>
+                    <p class="team-role text-muted mb-2">Founder & CEO</p>
+                    <p class="team-bio small">Tech entrepreneur with a passion for social impact and community development.</p>
+                    <div class="team-social mt-3">
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="team-card text-center">
+                    <div class="team-image mb-3">
+                        <img src="{% static 'images/team-2.jpg' %}" alt="Team Member" class="img-fluid rounded-circle">
+                    </div>
+                    <h3 class="team-name h5 mb-1">Abena Osei</h3>
+                    <p class="team-role text-muted mb-2">Community Manager</p>
+                    <p class="team-bio small">Former NGO coordinator with expertise in volunteer management and community engagement.</p>
+                    <div class="team-social mt-3">
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="team-card text-center">
+                    <div class="team-image mb-3">
+                        <img src="{% static 'images/team-3.jpg' %}" alt="Team Member" class="img-fluid rounded-circle">
+                    </div>
+                    <h3 class="team-name h5 mb-1">Emmanuel Adu</h3>
+                    <p class="team-role text-muted mb-2">Lead Developer</p>
+                    <p class="team-bio small">Full-stack developer dedicated to building technology for social good.</p>
+                    <div class="team-social mt-3">
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="team-card text-center">
+                    <div class="team-image mb-3">
+                        <img src="{% static 'images/team-4.jpg' %}" alt="Team Member" class="img-fluid rounded-circle">
+                    </div>
+                    <h3 class="team-name h5 mb-1">Fatima Ibrahim</h3>
+                    <p class="team-role text-muted mb-2">Partnerships Director</p>
+                    <p class="team-bio small">Relationship builder with extensive experience in nonprofit partnerships and outreach.</p>
+                    <div class="team-social mt-3">
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section py-5 bg-light">
+    <div class="container text-center" data-aos="zoom-in">
+        <h2 class="h2 mb-4">Ready to Join Our Community?</h2>
+        <p class="lead mb-4">Be part of our mission to transform volunteerism in Accra</p>
+        <div class="cta-buttons">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3 mb-2 mb-md-0">
+                    <i class="fas fa-user-plus me-2"></i> Join Now
+                </a>
+                <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-envelope me-2"></i> Contact Us
+                </a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg me-3 mb-2 mb-md-0">
+                    <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+                </a>
+                <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-envelope me-2"></i> Contact Us
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .section-title {
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .subtitle {
+        color: var(--primary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    
+    .image-wrapper {
+        position: relative;
+    }
+    
+    .image-shape {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        opacity: 0.1;
+        top: -30px;
+        left: -30px;
+        z-index: -1;
+    }
+    
+    .mission-icon, .vision-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .value-card {
+        background-color: #f8f9fa;
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+    }
+    
+    .value-card:hover {
+        transform: translateY(-10px);
+        background-color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .value-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+        font-size: 1.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+    
+    .value-card:hover .value-icon {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .stat-card {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: var(--border-radius);
+    }
+    
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-label {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .team-image img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border: 5px solid rgba(78, 84, 200, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .team-card:hover .team-image img {
+        border-color: var(--primary);
+    }
+    
+    .team-social {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .social-link {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .social-link:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    @media (max-width: 767.98px) {
+        .stat-number {
+            font-size: 2.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+        }
+        
+        .team-image img {
+            width: 120px;
+            height: 120px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animated counters
+        const counterElements = document.querySelectorAll('.animated-counter');
+        
+        const animateCounters = function() {
+            counterElements.forEach(function(counter) {
+                const target = parseInt(counter.getAttribute('data-target'), 10);
+                const count = parseInt(counter.innerText, 10);
+                
+                // Calculate increment based on target (faster for smaller numbers)
+                const inc = Math.max(1, Math.floor(target / 50));
+                
+                if (count < target) {
+                    counter.innerText = Math.min(count + inc, target);
+                    setTimeout(animateCounters, 20);
+                } else {
+                    counter.innerText = target;
+                }
+            });
+        };
+        
+        // Initialize IntersectionObserver to trigger counter animation when visible
+        if ('IntersectionObserver' in window) {
+            const options = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        animateCounters();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, options);
+            
+            const counterSection = document.querySelector('.impact-stats');
+            if (counterSection) {
+                observer.observe(counterSection);
+            }
+        } else {
+            // Fallback for browsers that don't support IntersectionObserver
+            animateCounters();
+        }
+        
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('about-header.svg')) {
+                    img.src = 'https://via.placeholder.com/500x300?text=About+Us';
+                } else if (img.src.includes('about-story.jpg')) {
+                    img.src = 'https://via.placeholder.com/600x400?text=Our+Story';
+                } else if (img.src.includes('team-')) {
+                    // Extract the team member number
+                    const teamNum = img.src.match(/team-(\d+)/)?.[1] || '1';
+                    const initials = ['KM', 'AO', 'EA', 'FI'][parseInt(teamNum) - 1] || 'TM';
+                    img.src = `https://via.placeholder.com/150x150?text=${initials}`;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
