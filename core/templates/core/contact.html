@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Contact Us | Local Volunteer Network{% endblock %}
+{% block body_class %}contact-page{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="contact-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-5 fw-bold mb-3">Contact Us</h1>
+                <p class="lead mb-0">Have questions or feedback? We'd love to hear from you!</p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
+                <img src="{% static 'images/contact-header.svg' %}" alt="Contact Us" class="img-fluid" style="max-height: 300px;">
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Info -->
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="contact-info p-4 bg-light rounded-lg shadow-sm">
+                    <h2 class="h3 mb-4">Get In Touch</h2>
+                    <p class="mb-4">We're here to answer any questions you have about volunteering in Accra. Feel free to reach out to us through any of the following channels:</p>
+                    
+                    <div class="contact-item d-flex mb-4">
+                        <div class="contact-icon me-3">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3 class="h6 mb-1">Address</h3>
+                            <p class="mb-0">123 Community Ave, Accra, Ghana</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item d-flex mb-4">
+                        <div class="contact-icon me-3">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3 class="h6 mb-1">Email</h3>
+                            <p class="mb-0"><a href="mailto:info@localvolunteer.net">info@localvolunteer.net</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item d-flex mb-4">
+                        <div class="contact-icon me-3">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3 class="h6 mb-1">Phone</h3>
+                            <p class="mb-0"><a href="tel:+233XXXXXXXXX">+233 XX XXX XXXX</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item d-flex mb-4">
+                        <div class="contact-icon me-3">
+                            <i class="far fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3 class="h6 mb-1">Office Hours</h3>
+                            <p class="mb-0">Monday - Friday: 9AM - 5PM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="social-links mt-4">
+                        <h3 class="h6 mb-3">Connect With Us</h3>
+                        <div class="d-flex gap-3">
+                            <a href="#" class="social-link">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="col-lg-7" data-aos="fade-left">
+                <div class="contact-form-card p-4 p-lg-5 bg-white rounded-lg shadow-sm">
+                    <h2 class="h3 mb-4">Send Us a Message</h2>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.name|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.email|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.subject|as_crispy_field }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.message|as_crispy_field }}
+                        </div>
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="privacyCheck" required>
+                            <label class="form-check-label" for="privacyCheck">
+                                I consent to having this website store my submitted information so they can respond to my inquiry.
+                            </label>
+                            <div class="invalid-feedback">
+                                You must agree to our privacy policy.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i> Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Location Map -->
+                <div class="map-container mt-4 rounded-lg shadow-sm overflow-hidden" data-aos="fade-up">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127120.50800679417!2d-0.2571244164059898!3d5.603716535400902!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9084b2b7a773%3A0xbed14ed8650e2dd3!2sAccra%2C%20Ghana!5e0!3m2!1sen!2sus!4v1656926428368!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section py-5 bg-light">
+    <div class="container text-center" data-aos="zoom-in">
+        <h2 class="h2 mb-4">Join Our Community</h2>
+        <p class="lead mb-4">Connect with volunteers and organizations making a difference in Accra</p>
+        <div class="cta-buttons">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3 mb-2 mb-md-0">
+                    <i class="fas fa-user-plus me-2"></i> Join Now
+                </a>
+                <a href="{% url 'opportunity_list' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-search me-2"></i> Browse Opportunities
+                </a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg me-3 mb-2 mb-md-0">
+                    <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+                </a>
+                <a href="{% url 'opportunity_list' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-search me-2"></i> Browse Opportunities
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .contact-info, .contact-form-card {
+        height: 70%;
+    }
+    
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    
+    .social-link {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+    
+    .social-link:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-3px);
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+    }
+    
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(78, 84, 200, 0.1);
+    }
+    
+    /* Animation for cards */
+    .contact-info, .contact-form-card, .faq-card, .map-container {
+        transition: all 0.3s ease;
+    }
+    
+    .contact-info:hover, .contact-form-card:hover, .faq-card:hover, .map-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        }
+        
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('contact-header.svg')) {
+                    img.src = 'https://via.placeholder.com/500x300?text=Contact+Us';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
