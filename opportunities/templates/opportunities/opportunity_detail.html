@@ -1,0 +1,729 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}{{ opportunity.title }} | Local Volunteer Network{% endblock %}
+{% block body_class %}opportunity-detail-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="opportunity-header bg-gradient-primary position-relative py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto text-center text-white">
+                <div class="d-inline-block mb-3">
+                    <span class="badge bg-white text-primary fs-6 px-4 py-2">{{ opportunity.status|title }}</span>
+                </div>
+                <h1 class="display-5 fw-bold mb-4" data-aos="fade-up">{{ opportunity.title }}</h1>
+                <div class="d-flex justify-content-center flex-wrap gap-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-2">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <span>{{ opportunity.location }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-2">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <span>
+                            {% if opportunity.end_date %}
+                                {{ opportunity.start_date|format_date_range:opportunity.end_date }}
+                            {% else %}
+                                {{ opportunity.start_date|date:"F d, Y" }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-2">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span>{{ opportunity.positions_filled }}/{{ opportunity.positions }} Positions</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
+                    {% if user.is_authenticated and user.profile.user_type == 'volunteer' %}
+                        {% if has_applied %}
+                            <a href="{% url 'application_detail' application.id %}" class="btn btn-light btn-lg">
+                                <i class="fas fa-clipboard-check me-2"></i> View Application
+                            </a>
+                        {% else %}
+                            <a href="{% url 'apply_opportunity' opportunity.id %}" class="btn btn-light btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i> Apply Now
+                            </a>
+                        {% endif %}
+                    {% elif user.is_authenticated and user.profile.user_type == 'organization' %}
+                        {% if opportunity.organization.user_profile.user == user %}
+                            <a href="{% url 'edit_opportunity' opportunity.id %}" class="btn btn-light btn-lg me-3">
+                                <i class="fas fa-edit me-2"></i> Edit Opportunity
+                            </a>
+                            <a href="{% url 'delete_opportunity' opportunity.id %}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-trash me-2"></i> Delete
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-light btn-lg disabled">
+                                <i class="fas fa-info-circle me-2"></i> Only Volunteers Can Apply
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-light btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login to Apply
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="opportunity-content py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Left Column - Opportunity Details -->
+            <div class="col-lg-8" data-aos="fade-up">
+                <!-- Tabs Navigation -->
+                <ul class="nav nav-tabs mb-4" id="opportunityTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">
+                            <i class="fas fa-info-circle me-2"></i> Details
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="organization-tab" data-bs-toggle="tab" data-bs-target="#organization" type="button" role="tab" aria-controls="organization" aria-selected="false">
+                            <i class="fas fa-building me-2"></i> Organization
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="requirements-tab" data-bs-toggle="tab" data-bs-target="#requirements" type="button" role="tab" aria-controls="requirements" aria-selected="false">
+                            <i class="fas fa-clipboard-list me-2"></i> Requirements
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Tab Content -->
+                <div class="tab-content p-4 bg-white rounded shadow-sm" id="opportunityTabContent">
+                    <!-- Description Tab -->
+                    <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                        <h3 class="h4 mb-4">About This Opportunity</h3>
+                        <div class="opportunity-description">
+                            {{ opportunity.description|linebreaks }}
+                        </div>
+                        
+                        {% if opportunity.start_time and opportunity.end_time %}
+                            <div class="mt-4">
+                                <h4 class="h5 mb-3"><i class="fas fa-clock me-2 text-primary"></i> Schedule</h4>
+                                <p class="mb-0">
+                                    {{ opportunity.start_time|format_time_range:opportunity.end_time }}
+                                </p>
+                            </div>
+                        {% endif %}
+                        
+                        {% if opportunity.application_deadline %}
+                            <div class="alert alert-info mt-4">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-calendar-day fa-2x text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="alert-heading">Application Deadline</h5>
+                                        <p class="mb-0">
+                                            {% with days=opportunity.application_deadline|days_until %}
+                                                {% if days > 0 %}
+                                                    Applications are due by <strong>{{ opportunity.application_deadline|date:"F d, Y" }}</strong> ({{ days }} days from now).
+                                                {% elif days == 0 %}
+                                                    Applications are due <strong>today</strong>!
+                                                {% else %}
+                                                    The application deadline has passed on {{ opportunity.application_deadline|date:"F d, Y" }}.
+                                                {% endif %}
+                                            {% endwith %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Organization Tab -->
+                    <div class="tab-pane fade" id="organization" role="tabpanel" aria-labelledby="organization-tab">
+                        <div class="organization-profile">
+                            <div class="d-flex align-items-center mb-4">
+                                {% if opportunity.organization.user_profile.profile_picture %}
+                                    <img src="{{ opportunity.organization.user_profile.profile_picture.url }}" alt="{{ opportunity.organization.organization_name }}" class="rounded-circle me-3" style="width: 70px; height: 70px; object-fit: cover;">
+                                {% else %}
+                                    <div class="avatar-placeholder me-3" style="width: 70px; height: 70px; font-size: 1.75rem;">
+                                        {{ opportunity.organization.organization_name|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <h3 class="h4 mb-1">{{ opportunity.organization.organization_name }}</h3>
+                                    <p class="text-muted mb-0">
+                                        <i class="fas fa-map-marker-alt me-1"></i> {{ opportunity.organization.user_profile.address|default:"Location not specified" }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h4 class="h5 mb-3"><i class="fas fa-bullseye me-2 text-primary"></i> Mission</h4>
+                                <p>{{ opportunity.organization.mission|default:"No mission statement provided."|linebreaks }}</p>
+                            </div>
+                            
+                            {% if opportunity.organization.interests.all %}
+                                <div class="mb-4">
+                                    <h4 class="h5 mb-3"><i class="fas fa-heart me-2 text-primary"></i> Areas of Focus</h4>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for interest in opportunity.organization.interests.all %}
+                                            <span class="badge bg-light text-dark p-2">{{ interest.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="mt-4">
+                                <a href="{% url 'organization_detail' opportunity.organization.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-building me-2"></i> View Organization Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Requirements Tab -->
+                    <div class="tab-pane fade" id="requirements" role="tabpanel" aria-labelledby="requirements-tab">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <h4 class="h5 mb-3"><i class="fas fa-tools me-2 text-primary"></i> Required Skills</h4>
+                                {% if opportunity.required_skills.all %}
+                                    <div class="skill-list">
+                                        {% for skill in opportunity.required_skills.all %}
+                                            <div class="skill-item d-flex align-items-center mb-2">
+                                                <div class="skill-icon me-2">
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                </div>
+                                                <span>{{ skill.name }}</span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">No specific skills required.</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <h4 class="h5 mb-3"><i class="fas fa-heart me-2 text-primary"></i> Related Causes</h4>
+                                {% if opportunity.interests.all %}
+                                    <div class="interest-list">
+                                        {% for interest in opportunity.interests.all %}
+                                            <div class="interest-item d-flex align-items-center mb-2">
+                                                <div class="interest-icon me-2">
+                                                    <i class="fas fa-tag text-primary"></i>
+                                                </div>
+                                                <span>{{ interest.name }}</span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">No specific causes listed.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <h4 class="h5 mb-3"><i class="fas fa-user-clock me-2 text-primary"></i> Commitment</h4>
+                                <div class="commitment-details p-4 bg-light rounded mb-4">
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <div class="d-flex">
+                                                <div class="icon-box bg-primary text-white me-3">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </div>
+                                                <div>
+                                                    <h5 class="h6 mb-1">Date</h5>
+                                                    <p class="mb-0">
+                                                        {% if opportunity.end_date %}
+                                                            {{ opportunity.start_date|format_date_range:opportunity.end_date }}
+                                                        {% else %}
+                                                            {{ opportunity.start_date|date:"F d, Y" }}
+                                                        {% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="d-flex">
+                                                <div class="icon-box bg-primary text-white me-3">
+                                                    <i class="fas fa-clock"></i>
+                                                </div>
+                                                <div>
+                                                    <h5 class="h6 mb-1">Time</h5>
+                                                    <p class="mb-0">
+                                                        {% if opportunity.start_time and opportunity.end_time %}
+                                                            {{ opportunity.start_time|format_time_range:opportunity.end_time }}
+                                                        {% else %}
+                                                            Time not specified
+                                                        {% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="d-flex">
+                                                <div class="icon-box bg-primary text-white me-3">
+                                                    <i class="fas fa-map-marked-alt"></i>
+                                                </div>
+                                                <div>
+                                                    <h5 class="h6 mb-1">Location</h5>
+                                                    <p class="mb-0">{{ opportunity.location }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="d-flex">
+                                                <div class="icon-box bg-primary text-white me-3">
+                                                    <i class="fas fa-users"></i>
+                                                </div>
+                                                <div>
+                                                    <h5 class="h6 mb-1">Positions</h5>
+                                                    <p class="mb-0">{{ opportunity.positions_filled }}/{{ opportunity.positions }} positions filled</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Call to Action -->
+                <div class="cta-section p-4 bg-light rounded mt-4 text-center" data-aos="fade-up">
+                    <h3 class="h4 mb-3">Ready to Make a Difference?</h3>
+                    {% if user.is_authenticated and user.profile.user_type == 'volunteer' %}
+                        {% if has_applied %}
+                            <p class="mb-4">You've already applied for this opportunity. Check your application status below.</p>
+                            <a href="{% url 'application_detail' application.id %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-clipboard-check me-2"></i> View Application
+                            </a>
+                        {% else %}
+                            <p class="mb-4">Join this volunteer opportunity and contribute to making Accra a better place!</p>
+                            <a href="{% url 'apply_opportunity' opportunity.id %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i> Apply Now
+                            </a>
+                        {% endif %}
+                    {% elif user.is_authenticated and user.profile.user_type == 'organization' %}
+                        <p class="mb-4">This opportunity is available for volunteers. Share it with your network!</p>
+                        <button class="btn btn-primary btn-lg" onclick="shareOpportunity()">
+                            <i class="fas fa-share-alt me-2"></i> Share This Opportunity
+                        </button>
+                    {% else %}
+                        <p class="mb-4">Log in or register as a volunteer to apply for this opportunity.</p>
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-lg me-2 mb-2 mb-md-0">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                        </a>
+                        <a href="{% url 'register_volunteer' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i> Register as Volunteer
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Right Column - Sidebar -->
+            <div class="col-lg-4">
+                <!-- Application Status -->
+                {% if has_applied %}
+                    <div class="sidebar-card mb-4" data-aos="fade-left">
+                        <h4 class="h5 card-title mb-4"><i class="fas fa-clipboard-check me-2"></i> Your Application</h4>
+                        <div class="application-status p-4 rounded
+                            {% if application.status == 'accepted' %}bg-success-subtle{% elif application.status == 'declined' %}bg-danger-subtle{% elif application.status == 'pending' %}bg-info-subtle{% else %}bg-secondary-subtle{% endif %}
+                        ">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="h6 mb-0">Status</h5>
+                                <span class="badge status-badge-{{ application.status }}">{{ application.status|title }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="h6 mb-0">Applied On</h5>
+                                <span>{{ application.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            
+                            {% if application.status == 'accepted' %}
+                                <div class="alert alert-success mt-3 mb-0">
+                                    <i class="fas fa-check-circle me-2"></i> Your application has been accepted!
+                                </div>
+                            {% elif application.status == 'declined' %}
+                                <div class="alert alert-danger mt-3 mb-0">
+                                    <i class="fas fa-times-circle me-2"></i> Your application was not accepted for this opportunity.
+                                </div>
+                            {% elif application.status == 'pending' %}
+                                <div class="alert alert-info mt-3 mb-0">
+                                    <i class="fas fa-hourglass-half me-2"></i> Your application is under review.
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-grid mt-3">
+                                <a href="{% url 'application_detail' application.id %}" class="btn btn-primary">
+                                    <i class="fas fa-eye me-2"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <!-- Organization Card -->
+                <div class="sidebar-card mb-4" data-aos="fade-left" data-aos-delay="100">
+                    <h4 class="h5 card-title mb-4"><i class="fas fa-building me-2"></i> Organization</h4>
+                    <div class="organization-card text-center">
+                        {% if opportunity.organization.user_profile.profile_picture %}
+                            <img src="{{ opportunity.organization.user_profile.profile_picture.url }}" alt="{{ opportunity.organization.organization_name }}" class="rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                        {% else %}
+                            <div class="avatar-placeholder mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                                {{ opportunity.organization.organization_name|first|upper }}
+                            </div>
+                        {% endif %}
+                        <h5 class="mb-1">{{ opportunity.organization.organization_name }}</h5>
+                        <p class="text-muted small mb-3">
+                            <i class="fas fa-map-marker-alt me-1"></i> {{ opportunity.organization.user_profile.address|default:"Location not specified" }}
+                        </p>
+                        
+                        {% if opportunity.organization.is_verified %}
+                            <div class="badge bg-success mb-3">
+                                <i class="fas fa-check-circle me-1"></i> Verified Organization
+                            </div>
+                        {% endif %}
+                        
+                        <div class="d-grid">
+                            <a href="{% url 'organization_detail' opportunity.organization.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i> View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Share Card -->
+                <div class="sidebar-card mb-4" data-aos="fade-left" data-aos-delay="200">
+                    <h4 class="h5 card-title mb-4"><i class="fas fa-share-alt me-2"></i> Share</h4>
+                    <p class="small mb-3">Help spread the word about this volunteer opportunity!</p>
+                    <div class="share-buttons d-flex justify-content-center gap-2">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-primary btn-sm social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Check out this volunteer opportunity: {{ opportunity.title }}" target="_blank" class="btn btn-outline-primary btn-sm social-btn">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ opportunity.title }}" target="_blank" class="btn btn-outline-primary btn-sm social-btn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="mailto:?subject=Volunteer Opportunity: {{ opportunity.title }}&body=I thought you might be interested in this volunteer opportunity: {{ request.build_absolute_uri }}" class="btn btn-outline-primary btn-sm social-btn">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <button class="btn btn-outline-primary btn-sm social-btn" id="copyLinkBtn" data-link="{{ request.build_absolute_uri }}">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Key Details -->
+                <div class="sidebar-card mb-4" data-aos="fade-left" data-aos-delay="300">
+                    <h4 class="h5 card-title mb-4"><i class="fas fa-info-circle me-2"></i> Key Details</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted"><i class="fas fa-calendar-alt me-2"></i> Date:</span>
+                            <span class="fw-medium">
+                                {% if opportunity.end_date %}
+                                    {{ opportunity.start_date|format_date_range:opportunity.end_date }}
+                                {% else %}
+                                    {{ opportunity.start_date|date:"M d, Y" }}
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted"><i class="fas fa-clock me-2"></i> Time:</span>
+                            <span class="fw-medium">
+                                {% if opportunity.start_time and opportunity.end_time %}
+                                    {{ opportunity.start_time|time:"g:i A" }} - {{ opportunity.end_time|time:"g:i A" }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted"><i class="fas fa-map-marker-alt me-2"></i> Location:</span>
+                            <span class="fw-medium">{{ opportunity.location }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted"><i class="fas fa-users me-2"></i> Positions:</span>
+                            <span class="fw-medium">{{ opportunity.positions_filled }}/{{ opportunity.positions }}</span>
+                        </li>
+                        {% if opportunity.application_deadline %}
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span class="text-muted"><i class="fas fa-hourglass-end me-2"></i> Deadline:</span>
+                                <span class="fw-medium">{{ opportunity.application_deadline|date:"M d, Y" }}</span>
+                            </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted"><i class="fas fa-tag me-2"></i> Status:</span>
+                            <span class="badge status-badge-{{ opportunity.status }}">{{ opportunity.status|title }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Similar Opportunities Section -->
+<section class="similar-opportunities bg-light-gray py-5">
+    <div class="container">
+        <h2 class="h3 mb-4" data-aos="fade-up">Similar Opportunities</h2>
+        
+        <div class="row g-4">
+            {% for opportunity in similar_opportunities|slice:":3" %}
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                    <div class="card opportunity-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="badge status-badge-{{ opportunity.status }}">{{ opportunity.status|title }}</span>
+                                
+                                {% with days=opportunity.application_deadline|days_until %}
+                                    {% if days >= 0 %}
+                                        <span class="badge bg-{{ days|days_status }}-subtle text-{{ days|days_status }}">
+                                            {% if days == 0 %}
+                                                Closes today
+                                            {% else %}
+                                                {{ days }} days left
+                                            {% endif %}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            
+                            <h5 class="card-title">{{ opportunity.title }}</h5>
+                            <div class="opportunity-location mb-2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ opportunity.location }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <a href="{% url 'organization_detail' opportunity.organization.id %}" class="text-decoration-none d-flex align-items-center">
+                                    {% if opportunity.organization.user_profile.profile_picture %}
+                                        <img src="{{ opportunity.organization.user_profile.profile_picture.url }}" class="rounded-circle me-2" width="20" height="20" alt="{{ opportunity.organization.organization_name }}">
+                                    {% else %}
+                                        <div class="avatar-placeholder me-2" style="width: 20px; height: 20px; font-size: 10px;">
+                                            {{ opportunity.organization.organization_name|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                    <span class="small text-muted">{{ opportunity.organization.organization_name }}</span>
+                                </a>
+                            </div>
+                            
+                            <p class="card-text">{{ opportunity.description|truncatechars:100 }}</p>
+                            
+                            <div class="opportunity-meta mb-3">
+                                {% for skill in opportunity.required_skills.all|slice:":3" %}
+                                    <span class="meta-item">{{ skill.name }}</span>
+                                {% endfor %}
+                                {% if opportunity.required_skills.count > 3 %}
+                                    <span class="meta-item">+{{ opportunity.required_skills.count|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <a href="{% url 'opportunity_detail' opportunity.id %}" class="btn btn-outline-primary w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center" data-aos="fade-up">
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No similar opportunities found at the moment.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .opportunity-header {
+        padding-top: 120px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .icon-box {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .sidebar-card {
+        background-color: #fff;
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .social-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .skill-icon, .interest-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: var(--dark);
+        font-weight: 500;
+        padding: 10px 20px;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: var(--primary);
+        border-bottom: 2px solid var(--primary);
+        background-color: transparent;
+    }
+    
+    .tab-content {
+        border-radius: var(--border-radius);
+    }
+    
+    .commitment-details .icon-box {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+    }
+    
+    .status-badge-active {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge-filled {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+    
+    .status-badge-completed {
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+    }
+    
+    .status-badge-cancelled {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+    
+    .status-badge-pending {
+        background-color: rgba(23, 162, 184, 0.1);
+        color: #17a2b8;
+    }
+    
+    .status-badge-accepted {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge-declined {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    /* Animation for copy link success */
+    @keyframes copySuccess {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    
+    .copy-success {
+        animation: copySuccess 0.5s ease-in-out;
+        background-color: var(--success) !important;
+        color: white !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle copy link button
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', function() {
+                const link = this.getAttribute('data-link');
+                navigator.clipboard.writeText(link).then(() => {
+                    // Visual feedback
+                    copyLinkBtn.classList.add('copy-success');
+                    copyLinkBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        copyLinkBtn.classList.remove('copy-success');
+                        copyLinkBtn.innerHTML = '<i class="fas fa-link"></i>';
+                    }, 2000);
+                });
+            });
+        }
+        
+        // Handle share functionality
+        window.shareOpportunity = function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ opportunity.title }}',
+                    text: 'Check out this volunteer opportunity: {{ opportunity.title }}',
+                    url: window.location.href
+                })
+                .catch(console.error);
+            } else {
+                // Fallback for browsers that don't support navigator.share
+                alert('Use the share buttons below to share this opportunity.');
+            }
+        };
+        
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('opportunity-header.svg')) {
+                    img.src = 'https://via.placeholder.com/600x300?text=Volunteer+Opportunities';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
