@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+
+{% block title %}Create Opportunity | Local Volunteer Network{% endblock %}
+{% block body_class %}create-opportunity-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-5 fw-bold mb-3">Create Opportunity</h1>
+                <p class="lead mb-0">Post a new volunteer opportunity and find dedicated volunteers</p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
+                <img src="{% static 'images/create-opportunity.svg' %}" alt="Create Opportunity" class="img-fluid" style="max-height: 250px;">
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Form Section -->
+<section class="form-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <h2 class="h3 mb-4">Opportunity Details</h2>
+                        
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="mb-4">
+                                <h3 class="h5 mb-3">
+                                    <i class="fas fa-info-circle text-primary me-2"></i> Basic Information
+                                </h3>
+                                
+                                <div class="mb-3">
+                                    {{ form.title|as_crispy_field }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.description|as_crispy_field }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.location|as_crispy_field }}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="h5 mb-3">
+                                    <i class="fas fa-calendar-alt text-primary me-2"></i> Date & Time
+                                </h3>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        {{ form.start_date|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.end_date|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        {{ form.start_time|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.end_time|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        {{ form.positions|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.application_deadline|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="h5 mb-3">
+                                    <i class="fas fa-tags text-primary me-2"></i> Skills & Interests
+                                </h3>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-medium mb-2">{{ form.required_skills.label }}</label>
+                                    <div class="skills-container p-3 bg-light rounded">
+                                        {{ form.required_skills }}
+                                    </div>
+                                    <div class="form-text">Select skills that volunteers should have for this opportunity.</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-medium mb-2">{{ form.interests.label }}</label>
+                                    <div class="interests-container p-3 bg-light rounded">
+                                        {{ form.interests }}
+                                    </div>
+                                    <div class="form-text">Select areas of interest or causes related to this opportunity.</div>
+                                </div>
+                            </div>
+                            
+                            <div class="border-top pt-4 mt-4">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i> Create Opportunity
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <!-- Tips Card -->
+                <div class="sidebar-card mb-4" data-aos="fade-left">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="card-title h5 mb-3">
+                                <i class="fas fa-lightbulb text-primary me-2"></i> Tips for Creating Opportunities
+                            </h3>
+                            
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-3">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Be specific</strong> about what volunteers will do and what you expect.
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-3">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>List required skills</strong> to attract qualified volunteers.
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-3">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Provide clear dates and times</strong> to help volunteers plan.
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-3">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Set a reasonable deadline</strong> for applications.
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Describe the impact</strong> volunteers will make with their work.
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Preview Card -->
+                <div class="sidebar-card" data-aos="fade-left" data-aos-delay="100">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="card-title h5 mb-3">
+                                <i class="fas fa-eye text-primary me-2"></i> How Volunteers Will See Your Opportunity
+                            </h3>
+                            
+                            <div class="opportunity-preview p-3 bg-light rounded">
+                                <div class="preview-title h6 mb-2">Opportunity Title</div>
+                                <div class="preview-meta small text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt me-1"></i> Location
+                                    <span class="mx-2">|</span>
+                                    <i class="fas fa-calendar-alt me-1"></i> Date
+                                </div>
+                                <p class="preview-description small mb-2">Description of the volunteer opportunity...</p>
+                                <div class="preview-skills">
+                                    <span class="badge bg-primary-subtle text-primary me-1 mb-1">Skill 1</span>
+                                    <span class="badge bg-primary-subtle text-primary me-1 mb-1">Skill 2</span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="preview-organization small">
+                                    <strong>{{ request.user.profile.organization_profile.organization_name }}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-3">
+                                <div class="form-text">
+                                    Opportunities with complete information receive more applications!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .form-section .form-label {
+        font-weight: 500;
+    }
+    
+    .sidebar-card {
+        margin-bottom: 30px;
+    }
+    
+    .skills-container, .interests-container {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .opportunity-preview {
+        border: 1px dashed #ccc;
+        transition: all 0.3s ease;
+    }
+    
+    .opportunity-preview:hover {
+        border-color: var(--primary);
+    }
+    
+    /* Custom styling for checkbox fields */
+    .form-check {
+        margin-bottom: 8px;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        });
+        
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('create-opportunity.svg')) {
+                    img.src = 'https://via.placeholder.com/400x250?text=Create+Opportunity';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
