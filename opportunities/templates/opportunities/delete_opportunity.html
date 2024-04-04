@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}Delete Opportunity | Local Volunteer Network{% endblock %}
+{% block body_class %}delete-opportunity-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-10 mx-auto text-center">
+                <div class="d-flex align-items-center justify-content-center mb-2">
+                    <a href="{% url 'opportunity_detail' opportunity.id %}" class="text-white me-3">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="display-5 fw-bold mb-0">Delete Opportunity</h1>
+                </div>
+                <p class="lead mb-0">Are you sure you want to delete "{{ opportunity.title }}"?</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Delete Confirmation Section -->
+<section class="delete-confirmation-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10" data-aos="fade-up">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="text-center mb-4">
+                            <div class="delete-icon mb-3">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h2 class="h3 mb-3">This action cannot be undone</h2>
+                            <p class="mb-0">Deleting this opportunity will permanently remove it from the platform. All associated applications will also be deleted.</p>
+                        </div>
+                        
+                        <div class="opportunity-summary mb-4 p-4 bg-light rounded">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h3 class="h5 mb-3">Opportunity Details</h3>
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <span class="fw-medium">Title:</span> {{ opportunity.title }}
+                                        </li>
+                                        <li class="mb-2">
+                                            <span class="fw-medium">Location:</span> {{ opportunity.location }}
+                                        </li>
+                                        <li class="mb-2">
+                                            <span class="fw-medium">Date:</span> 
+                                            {% if opportunity.end_date %}
+                                                {{ opportunity.start_date|format_date_range:opportunity.end_date }}
+                                            {% else %}
+                                                {{ opportunity.start_date|date:"F d, Y" }}
+                                            {% endif %}
+                                        </li>
+                                        <li class="mb-2">
+                                            <span class="fw-medium">Status:</span> 
+                                            <span class="badge status-badge-{{ opportunity.status }}">{{ opportunity.status|title }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <h3 class="h5 mb-3">Impact</h3>
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <span class="fw-medium">Applications:</span> {{ opportunity.applications.count }}
+                                        </li>
+                                        <li class="mb-2">
+                                            <span class="fw-medium">Positions:</span> {{ opportunity.positions_filled }}/{{ opportunity.positions }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if opportunity.applications.count > 0 %}
+                            <div class="alert alert-danger mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-exclamation-circle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="alert-heading h5">Warning: Existing Applications</h4>
+                                        <p class="mb-0">This opportunity has <strong>{{ opportunity.applications.count }}</strong> application(s). Deleting it will remove all applications and could disappoint volunteers who have already applied.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <form method="post" class="confirmation-form">
+                            {% csrf_token %}
+                            
+                            <div class="form-group mb-4">
+                                <label for="confirmText" class="form-label">Please type <strong>DELETE</strong> to confirm:</label>
+                                <input type="text" class="form-control" id="confirmText" placeholder="DELETE" required pattern="DELETE">
+                                <div class="invalid-feedback">
+                                    Please type DELETE to confirm deletion.
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'opportunity_detail' opportunity.id %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-2"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-danger delete-btn" disabled>
+                                    <i class="fas fa-trash me-2"></i> Permanently Delete
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Alternatives Card -->
+                <div class="alternatives-card mt-4 p-4 bg-light rounded shadow-sm" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="h5 mb-3">
+                        <i class="fas fa-info-circle text-primary me-2"></i> Alternatives to Deletion
+                    </h3>
+                    <p class="mb-3">Instead of deleting this opportunity, you might consider these alternatives:</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="d-flex">
+                                <div class="me-3 text-primary">
+                                    <i class="fas fa-ban"></i>
+                                </div>
+                                <div>
+                                    <strong>Mark as cancelled</strong>
+                                    <div class="small text-muted">This will keep the record but hide it from search results.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3 text-primary">
+                                    <i class="fas fa-edit"></i>
+                                </div>
+                                <div>
+                                    <strong>Update the opportunity</strong>
+                                    <div class="small text-muted">Edit details if the opportunity has changed but is still valid.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        background-color: #dc3545;
+        background-image: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+    }
+    
+    .delete-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .confirmation-form .form-control:valid {
+        border-color: #dc3545;
+    }
+    
+    .confirmation-form .form-control:valid:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmInput = document.getElementById('confirmText');
+        const deleteBtn = document.querySelector('.delete-btn');
+        
+        // Enable/disable delete button based on confirmation text
+        confirmInput.addEventListener('input', function() {
+            if (this.value === 'DELETE') {
+                deleteBtn.disabled = false;
+            } else {
+                deleteBtn.disabled = true;
+            }
+        });
+        
+        // Form validation
+        const form = document.querySelector('.confirmation-form');
+        
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+{% endblock %}
