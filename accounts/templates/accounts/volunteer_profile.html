@@ -1,0 +1,567 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}{{ volunteer_profile.user_profile.user.get_full_name }} | Local Volunteer Network{% endblock %}
+{% block body_class %}volunteer-profile-page{% endblock %}
+
+{% block content %}
+<!-- Volunteer Header -->
+<section class="profile-header bg-gradient-primary">
+    <div class="container">
+        <div class="row py-5">
+            <div class="col-lg-8 col-md-10 mx-auto position-relative">
+                <!-- Volunteer Quick Info -->
+                <div class="profile-card bg-white shadow-lg rounded-lg" data-aos="fade-up">
+                    <div class="profile-banner" style="background-image: url({% static 'images/volunteer-banner.jpg' %});">
+                        <div class="profile-overlay"></div>
+                    </div>
+                    
+                    <div class="profile-avatar">
+                        {% if volunteer_profile.user_profile.profile_picture %}
+                            <img src="{{ volunteer_profile.user_profile.profile_picture.url }}" alt="{{ volunteer_profile.user_profile.user.get_full_name }}" class="avatar-image">
+                        {% else %}
+                            <div class="avatar-placeholder">
+                                {{ volunteer_profile.user_profile.user.first_name|first|upper }}{{ volunteer_profile.user_profile.user.last_name|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="profile-info p-4 pb-5">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h1 class="h3 mb-1">{{ volunteer_profile.user_profile.user.get_full_name }}</h1>
+                                <p class="text-muted mb-0">
+                                    <i class="fas fa-map-marker-alt me-1"></i> {{ volunteer_profile.user_profile.address|default:"Location not specified" }}
+                                </p>
+                            </div>
+                            <div class="d-flex">
+                                {% if volunteer_profile.volunteer_rating %}
+                                    <div class="rating-badge me-2">
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-star me-1"></i> {{ volunteer_profile.volunteer_rating|floatformat:1 }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if request.user.is_authenticated and request.user == volunteer_profile.user_profile.user %}
+                                    <a href="{% url 'edit_volunteer_profile' %}" class="btn btn-primary">
+                                        <i class="fas fa-edit me-2"></i> Edit Profile
+                                    </a>
+                                    <a href="{% url 'application_list' %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-clipboard-list me-2"></i> My Applications
+                                    </a>
+                                {% elif request.user.is_authenticated and request.user.profile.user_type == 'organization' %}
+                                    <a href="{% url 'opportunity_list' %}" class="btn btn-primary">
+                                        <i class="fas fa-bullhorn me-2"></i> Create Opportunity
+                                    </a>
+                                {% endif %}
+                                <button class="btn btn-outline-primary" onclick="shareProfile()">
+                                    <i class="fas fa-share-alt me-2"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Volunteer Content -->
+<section class="profile-content py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- About Section -->
+                <div class="content-card mb-4" data-aos="fade-up">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h2 class="section-title h4 mb-4">
+                                <i class="fas fa-user me-2 text-primary"></i> About
+                            </h2>
+                            
+                            <div class="bio-block">
+                                {% if volunteer_profile.user_profile.bio %}
+                                    <p>{{ volunteer_profile.user_profile.bio|linebreaks }}</p>
+                                {% else %}
+                                    <p class="text-muted">No bio provided.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skills Section -->
+                <div class="content-card mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h2 class="section-title h4 mb-4">
+                                <i class="fas fa-tools me-2 text-primary"></i> Skills
+                            </h2>
+                            
+                            {% if volunteer_profile.skills.all %}
+                                <div class="skills-container">
+                                    <div class="row g-3">
+                                        {% for skill in volunteer_profile.skills.all %}
+                                            <div class="col-md-6">
+                                                <div class="skill-item d-flex align-items-center p-3 rounded bg-light">
+                                                    <div class="skill-icon me-3 text-primary">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="h6 mb-0">{{ skill.name }}</h4>
+                                                        <small class="text-muted">{{ skill.description|default:"" }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No skills specified.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Interests Section -->
+                <div class="content-card mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h2 class="section-title h4 mb-4">
+                                <i class="fas fa-heart me-2 text-primary"></i> Interests
+                            </h2>
+                            
+                            {% if volunteer_profile.interests.all %}
+                                <div class="interests-container">
+                                    <div class="row g-3">
+                                        {% for interest in volunteer_profile.interests.all %}
+                                            <div class="col-md-6">
+                                                <div class="interest-item d-flex align-items-center p-3 rounded bg-light">
+                                                    <div class="interest-icon me-3 text-primary">
+                                                        <i class="fas fa-tag"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="h6 mb-0">{{ interest.name }}</h4>
+                                                        <small class="text-muted">{{ interest.description|default:"" }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No interests specified.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Availability Section -->
+                <div class="content-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h2 class="section-title h4 mb-4">
+                                <i class="fas fa-calendar-alt me-2 text-primary"></i> Availability
+                            </h2>
+                            
+                            {% if volunteer_profile.availability %}
+                                <div class="availability-container">
+                                    <div class="row">
+                                        <div class="col-lg-6 mb-4 mb-lg-0">
+                                            <h3 class="h5 mb-3">Weekdays</h3>
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="availability-item d-flex align-items-center">
+                                                    <div class="me-3 {% if 'weekday_morning' in volunteer_profile.get_availability %}text-success{% else %}text-muted{% endif %}">
+                                                        <i class="{% if 'weekday_morning' in volunteer_profile.get_availability %}fas{% else %}far{% endif %} fa-check-circle fa-lg"></i>
+                                                    </div>
+                                                    <div>Morning (8am - 12pm)</div>
+                                                </div>
+                                                <div class="availability-item d-flex align-items-center">
+                                                    <div class="me-3 {% if 'weekday_afternoon' in volunteer_profile.get_availability %}text-success{% else %}text-muted{% endif %}">
+                                                        <i class="{% if 'weekday_afternoon' in volunteer_profile.get_availability %}fas{% else %}far{% endif %} fa-check-circle fa-lg"></i>
+                                                    </div>
+                                                    <div>Afternoon (12pm - 5pm)</div>
+                                                </div>
+                                                <div class="availability-item d-flex align-items-center">
+                                                    <div class="me-3 {% if 'weekday_evening' in volunteer_profile.get_availability %}text-success{% else %}text-muted{% endif %}">
+                                                        <i class="{% if 'weekday_evening' in volunteer_profile.get_availability %}fas{% else %}far{% endif %} fa-check-circle fa-lg"></i>
+                                                    </div>
+                                                    <div>Evening (5pm - 9pm)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h3 class="h5 mb-3">Weekends</h3>
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="availability-item d-flex align-items-center">
+                                                    <div class="me-3 {% if 'weekend_morning' in volunteer_profile.get_availability %}text-success{% else %}text-muted{% endif %}">
+                                                        <i class="{% if 'weekend_morning' in volunteer_profile.get_availability %}fas{% else %}far{% endif %} fa-check-circle fa-lg"></i>
+                                                    </div>
+                                                    <div>Morning (8am - 12pm)</div>
+                                                </div>
+                                                <div class="availability-item d-flex align-items-center">
+                                                    <div class="me-3 {% if 'weekend_afternoon' in volunteer_profile.get_availability %}text-success{% else %}text-muted{% endif %}">
+                                                        <i class="{% if 'weekend_afternoon' in volunteer_profile.get_availability %}fas{% else %}far{% endif %} fa-check-circle fa-lg"></i>
+                                                    </div>
+                                                    <div>Afternoon (12pm - 5pm)</div>
+                                                </div>
+                                                <div class="availability-item d-flex align-items-center">
+                                                    <div class="me-3 {% if 'weekend_evening' in volunteer_profile.get_availability %}text-success{% else %}text-muted{% endif %}">
+                                                        <i class="{% if 'weekend_evening' in volunteer_profile.get_availability %}fas{% else %}far{% endif %} fa-check-circle fa-lg"></i>
+                                                    </div>
+                                                    <div>Evening (5pm - 9pm)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No availability information provided.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Contact Info -->
+                <div class="sidebar-card mb-4" data-aos="fade-left">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="card-title h5 mb-3">
+                                <i class="fas fa-address-card me-2 text-primary"></i> Contact Information
+                            </h3>
+                            
+                            <ul class="list-unstyled contact-list">
+                                <li class="contact-item d-flex mb-3">
+                                    <div class="contact-icon me-3 text-primary">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small">Email</div>
+                                        <div>{{ volunteer_profile.user_profile.user.email }}</div>
+                                    </div>
+                                </li>
+                                
+                                <li class="contact-item d-flex mb-3">
+                                    <div class="contact-icon me-3 text-primary">
+                                        <i class="fas fa-phone"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small">Phone</div>
+                                        <div>{{ volunteer_profile.user_profile.phone|default:"Not provided" }}</div>
+                                    </div>
+                                </li>
+                                
+                                <li class="contact-item d-flex">
+                                    <div class="contact-icon me-3 text-primary">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small">Address</div>
+                                        <div>{{ volunteer_profile.user_profile.address|default:"Not provided" }}</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Card -->
+                <div class="sidebar-card mb-4" data-aos="fade-left" data-aos-delay="100">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="card-title h5 mb-3">
+                                <i class="fas fa-chart-bar me-2 text-primary"></i> Statistics
+                            </h3>
+                            
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="p-3 rounded bg-light text-center">
+                                        <div class="h2 mb-1">{{ applications_count }}</div>
+                                        <div class="small text-muted">Applications</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded bg-light text-center">
+                                        <div class="h2 mb-1">{{ accepted_applications }}</div>
+                                        <div class="small text-muted">Accepted</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded bg-light text-center">
+                                        <div class="h2 mb-1">{{ rating|default:"N/A" }}</div>
+                                        <div class="small text-muted">Avg. Rating</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded bg-light text-center">
+                                        <div class="h2 mb-1">{{ completed_opportunities }}</div>
+                                        <div class="small text-muted">Completed</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Share Card -->
+                <div class="sidebar-card" data-aos="fade-left" data-aos-delay="200">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="card-title h5 mb-3">
+                                <i class="fas fa-share-alt me-2 text-primary"></i> Share Profile
+                            </h3>
+                            
+                            <p class="small mb-3">Help share this volunteer's profile!</p>
+                            
+                            <div class="share-buttons d-flex justify-content-center gap-2">
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-primary btn-sm social-btn">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Check out {{ volunteer_profile.user_profile.user.get_full_name }} on Local Volunteer Network" target="_blank" class="btn btn-outline-primary btn-sm social-btn">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ volunteer_profile.user_profile.user.get_full_name }}" target="_blank" class="btn btn-outline-primary btn-sm social-btn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="mailto:?subject=Check out {{ volunteer_profile.user_profile.user.get_full_name }}&body=I thought you might be interested in this volunteer: {{ request.build_absolute_uri }}" class="btn btn-outline-primary btn-sm social-btn">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <button class="btn btn-outline-primary btn-sm social-btn" id="copyLinkBtn" data-link="{{ request.build_absolute_uri }}">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        position: relative;
+        padding-top: 80px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .profile-card {
+        position: relative;
+        margin-top: 20px;
+        overflow: hidden;
+    }
+    
+    .profile-banner {
+        height: 150px;
+        background-position: center;
+        background-size: cover;
+        background-color: #e9ecef;
+        position: relative;
+    }
+    
+    .profile-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+    }
+    
+    .profile-avatar {
+        position: absolute;
+        top: 100px;
+        left: 30px;
+        z-index: 2;
+    }
+    
+    .avatar-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid white;
+        background-color: white;
+        object-fit: cover;
+    }
+    
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 600;
+        border: 4px solid white;
+    }
+    
+    .profile-info {
+        padding-top: 50px;
+    }
+    
+    .profile-actions {
+        margin-top: 20px;
+    }
+    
+    .content-card, .sidebar-card {
+        margin-bottom: 30px;
+    }
+    
+    .section-title {
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background-color: var(--primary);
+    }
+    
+    .skill-icon, .interest-icon, .contact-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    
+    .social-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    @keyframes copySuccess {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    
+    .copy-success {
+        animation: copySuccess 0.5s ease-in-out;
+        background-color: var(--success) !important;
+        color: white !important;
+    }
+    
+    @media (max-width: 767.98px) {
+        .profile-avatar {
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .profile-info {
+            padding-top: 80px;
+            text-align: center;
+        }
+        
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .section-title:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle copy link button
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', function() {
+                const link = this.getAttribute('data-link');
+                navigator.clipboard.writeText(link).then(() => {
+                    // Visual feedback
+                    copyLinkBtn.classList.add('copy-success');
+                    copyLinkBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        copyLinkBtn.classList.remove('copy-success');
+                        copyLinkBtn.innerHTML = '<i class="fas fa-link"></i>';
+                    }, 2000);
+                });
+            });
+        }
+        
+        // Handle share functionality
+        window.shareProfile = function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ volunteer_profile.user_profile.user.get_full_name }}',
+                    text: 'Check out {{ volunteer_profile.user_profile.user.get_full_name }} on Local Volunteer Network',
+                    url: window.location.href
+                })
+                .catch(console.error);
+            } else {
+                // Fallback for browsers that don't support navigator.share
+                alert('Use the share buttons below to share this profile.');
+            }
+        };
+        
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.classList.contains('avatar-image')) {
+                    const parent = img.parentElement;
+                    if (parent) {
+                        const initials = '{{ volunteer_profile.user_profile.user.first_name|first|upper }}{{ volunteer_profile.user_profile.user.last_name|first|upper }}';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'avatar-placeholder';
+                        placeholder.textContent = initials;
+                        parent.replaceChild(placeholder, img);
+                    }
+                } else if (img.src.includes('volunteer-banner.jpg')) {
+                    img.src = 'https://via.placeholder.com/800x200?text=Volunteer+Banner';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
