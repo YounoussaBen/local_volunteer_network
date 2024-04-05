@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Organization Profile | Local Volunteer Network{% endblock %}
+{% block body_class %}edit-profile-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="d-flex align-items-center mb-2">
+                    <a href="{% url 'view_profile' %}" class="text-white me-3">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="display-5 fw-bold mb-0">Edit Organization Profile</h1>
+                </div>
+                <p class="lead mb-0">Complete your profile to attract dedicated volunteers</p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
+                <img src="{% static 'images/edit-organization.svg' %}" alt="Edit Organization" class="img-fluid" style="max-height: 250px;">
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Edit Profile Form Section -->
+<section class="edit-profile-form-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 mb-4" data-aos="fade-up">
+                <!-- Profile Menu -->
+                <div class="card profile-menu border-0 shadow-sm sticky-lg-top" style="top: 100px;">
+                    <div class="card-body p-0">
+                        <div class="profile-info text-center p-4">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}" alt="{{ organization_form.organization_name.value|default:user.get_full_name }}" class="profile-img rounded-circle mb-3">
+                            {% else %}
+                                <div class="profile-img-placeholder rounded-circle mb-3 mx-auto">
+                                    {{ organization_form.organization_name.value|default:user.get_full_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            <h3 class="h5 mb-1">{{ organization_form.organization_name.value|default:user.get_full_name }}</h3>
+                            <p class="text-muted">Organization</p>
+                        </div>
+                        
+                        <div class="list-group list-group-flush">
+                            <a href="#basic-info" class="list-group-item list-group-item-action d-flex align-items-center active">
+                                <i class="fas fa-building me-3"></i> Basic Information
+                            </a>
+                            <a href="#organization-details" class="list-group-item list-group-item-action d-flex align-items-center">
+                                <i class="fas fa-info-circle me-3"></i> Organization Details
+                            </a>
+                            <a href="#focus-areas" class="list-group-item list-group-item-action d-flex align-items-center">
+                                <i class="fas fa-heart me-3"></i> Focus Areas
+                            </a>
+                            <a href="{% url 'view_profile' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                <i class="fas fa-eye me-3"></i> View Public Profile
+                            </a>
+                            <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                <i class="fas fa-tachometer-alt me-3"></i> Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-9" data-aos="fade-up" data-aos-delay="100">
+                <form method="post" enctype="multipart/form-data" class="edit-profile-form">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information Section -->
+                    <div id="basic-info" class="card border-0 shadow-sm mb-4 scroll-section">
+                        <div class="card-header bg-white p-4 border-0">
+                            <h2 class="h4 mb-0">
+                                <i class="fas fa-building text-primary me-2"></i> Basic Information
+                            </h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <div class="profile-picture-upload text-center">
+                                    {% if user.profile.profile_picture %}
+                                        <div class="current-profile-image mb-3">
+                                            <img src="{{ user.profile.profile_picture.url }}" alt="{{ organization_form.organization_name.value|default:user.get_full_name }}" class="rounded-circle" width="100" height="100">
+                                        </div>
+                                    {% else %}
+                                        <div class="profile-img-placeholder rounded-circle mb-3 mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                                            {{ organization_form.organization_name.value|default:user.get_full_name|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="custom-file-upload">
+                                        <label for="{{ profile_form.profile_picture.id_for_label }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-camera me-2"></i> Change Organization Logo
+                                        </label>
+                                        <div class="form-text mt-2">Recommended size: 300x300 pixels</div>
+                                        {{ profile_form.profile_picture }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ organization_form.organization_name|as_crispy_field }}
+                            </div>
+                            
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    {{ profile_form.phone|as_crispy_field }}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ profile_form.address|as_crispy_field }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ organization_form.website|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Organization Details Section -->
+                    <div id="organization-details" class="card border-0 shadow-sm mb-4 scroll-section">
+                        <div class="card-header bg-white p-4 border-0">
+                            <h2 class="h4 mb-0">
+                                <i class="fas fa-info-circle text-primary me-2"></i> Organization Details
+                            </h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Share information about your organization to help volunteers understand your mission and work.
+                            </div>
+                            
+                            <div class="mb-4">
+                                {{ organization_form.mission|as_crispy_field }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ profile_form.bio|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Focus Areas Section -->
+                    <div id="focus-areas" class="card border-0 shadow-sm mb-4 scroll-section">
+                        <div class="card-header bg-white p-4 border-0">
+                            <h2 class="h4 mb-0">
+                                <i class="fas fa-heart text-primary me-2"></i> Focus Areas
+                            </h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Select areas of focus that align with your organization's mission to help match with volunteers who share your interests.
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Areas of Focus</label>
+                                <p class="text-muted small mb-3">What causes or areas does your organization focus on?</p>
+                                
+                                <div class="interests-checkboxes">
+                                    {{ organization_form.interests }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Verification Note -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex">
+                                <div class="verification-icon me-3 text-{% if organization_form.instance.is_verified %}success{% else %}warning{% endif %}">
+                                    <i class="fas fa-{% if organization_form.instance.is_verified %}check-circle{% else %}exclamation-circle{% endif %} fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">Verification Status: {% if organization_form.instance.is_verified %}Verified{% else %}Pending Verification{% endif %}</h3>
+                                    {% if organization_form.instance.is_verified %}
+                                        <p class="mb-0">Your organization has been verified. A verified badge will appear on your profile.</p>
+                                    {% else %}
+                                        <p class="mb-0">Complete your profile to speed up the verification process. We may contact you for additional information.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'view_profile' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .profile-menu .list-group-item {
+        padding: 0.75rem 1.25rem;
+        border: none;
+        border-left: 3px solid transparent;
+    }
+    
+    .profile-menu .list-group-item.active {
+        background-color: rgba(78, 84, 200, 0.1);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+    }
+    
+    .profile-menu .list-group-item:hover:not(.active) {
+        background-color: #f8f9fa;
+    }
+    
+    .profile-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+    
+    .profile-img-placeholder {
+        width: 100px;
+        height: 100px;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+    }
+    
+    .custom-file-upload input[type="file"] {
+        display: none;
+    }
+    
+    .scroll-section {
+        scroll-margin-top: 100px;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .interests-checkboxes .form-check {
+        display: inline-block;
+        margin-right: 15px;
+        margin-bottom: 10px;
+    }
+    
+    @media (max-width: 991.98px) {
+        .profile-menu {
+            position: static !important;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smooth scrolling for menu items
+        const menuItems = document.querySelectorAll('.profile-menu .list-group-item');
+        
+        menuItems.forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all items
+                    menuItems.forEach(function(mi) {
+                        mi.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Scroll to section
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Add active class to menu item based on scroll position
+        const sections = document.querySelectorAll('.scroll-section');
+        
+        function setActiveMenuItem() {
+            let currentSection = '';
+            
+            sections.forEach(function(section) {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (window.pageYOffset >= sectionTop - 200) {
+                    currentSection = '#' + section.getAttribute('id');
+                }
+            });
+            
+            menuItems.forEach(function(item) {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentSection) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', setActiveMenuItem);
+        
+        // Profile picture preview
+        const profilePictureInput = document.getElementById('{{ profile_form.profile_picture.id_for_label }}');
+        
+        if (profilePictureInput) {
+            profilePictureInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const container = document.querySelector('.profile-picture-upload');
+                        
+                        // Remove current profile image or placeholder
+                        const currentImage = container.querySelector('.current-profile-image');
+                        const placeholder = container.querySelector('.profile-img-placeholder');
+                        
+                        if (currentImage) {
+                            currentImage.remove();
+                        }
+                        
+                        if (placeholder) {
+                            placeholder.remove();
+                        }
+                        
+                        // Create new preview
+                        const preview = document.createElement('div');
+                        preview.className = 'current-profile-image mb-3';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Profile Preview';
+                        img.className = 'rounded-circle';
+                        img.width = 100;
+                        img.height = 100;
+                        
+                        preview.appendChild(img);
+                        container.insertBefore(preview, container.firstChild);
+                    };
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+        
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('edit-organization.svg')) {
+                    img.src = 'https://via.placeholder.com/400x250?text=Edit+Organization';
+                } else if (img.classList.contains('profile-img')) {
+                    const parent = img.parentElement;
+                    const initials = '{{ organization_form.organization_name.value|default:user.get_full_name|first|upper }}';
+                    
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'profile-img-placeholder rounded-circle mb-3 mx-auto';
+                    placeholder.textContent = initials;
+                    
+                    parent.replaceChild(placeholder, img);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
