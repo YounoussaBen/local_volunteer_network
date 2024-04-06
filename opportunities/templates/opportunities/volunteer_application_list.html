@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}My Applications | Local Volunteer Network{% endblock %}
+{% block body_class %}applications-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-5 fw-bold mb-3">My Applications</h1>
+                <p class="lead mb-0">Track and manage your volunteer applications</p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
+                <img src="{% static 'images/applications-header.svg' %}" alt="Applications" class="img-fluid" style="max-height: 250px;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Applications Section -->
+<section class="applications-section py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-6" data-aos="fade-up">
+                <div class="applications-stats d-flex flex-wrap gap-3">
+                    <div class="stat-pill bg-light px-3 py-2 rounded-pill">
+                        <i class="fas fa-clipboard-list text-primary me-2"></i>
+                        <span class="fw-medium">Total: {{ applications.count }}</span>
+                    </div>
+                    <div class="stat-pill bg-light px-3 py-2 rounded-pill">
+                        <i class="fas fa-hourglass-half text-warning me-2"></i>
+                        <span class="fw-medium">Pending: {{ applications|rejectattr:"status"|eq:"pending"|length }}</span>
+                    </div>
+                    <div class="stat-pill bg-light px-3 py-2 rounded-pill">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <span class="fw-medium">Accepted: {{ applications|rejectattr:"status"|eq:"accepted"|length }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0" data-aos="fade-up">
+                <div class="filter-buttons btn-group">
+                    <button type="button" class="btn btn-outline-primary active filter-btn" data-filter="all">
+                        All
+                    </button>
+                    <button type="button" class="btn btn-outline-primary filter-btn" data-filter="pending">
+                        Pending
+                    </button>
+                    <button type="button" class="btn btn-outline-primary filter-btn" data-filter="accepted">
+                        Accepted
+                    </button>
+                    <button type="button" class="btn btn-outline-primary filter-btn" data-filter="declined">
+                        Declined
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="applications-container" data-aos="fade-up" data-aos-delay="100">
+            {% if applications %}
+                <div class="card border-0 shadow-sm">
+                    <div class="list-group list-group-flush application-list">
+                        {% for application in applications %}
+                            <div class="list-group-item p-0 application-item" data-status="{{ application.status }}">
+                                <div class="application-card p-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-lg-6 mb-3 mb-lg-0">
+                                            <h3 class="h5 mb-1">
+                                                <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="text-decoration-none">
+                                                    {{ application.opportunity.title }}
+                                                </a>
+                                            </h3>
+                                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                <a href="{% url 'organization_detail' application.opportunity.organization.id %}" class="text-decoration-none d-flex align-items-center">
+                                                    {% if application.opportunity.organization.user_profile.profile_picture %}
+                                                        <img src="{{ application.opportunity.organization.user_profile.profile_picture.url }}" class="rounded-circle me-2" width="20" height="20" alt="{{ application.opportunity.organization.organization_name }}">
+                                                    {% else %}
+                                                        <div class="avatar-placeholder me-2" style="width: 20px; height: 20px; font-size: 10px;">
+                                                            {{ application.opportunity.organization.organization_name|first|upper }}
+                                                        </div>
+                                                    {% endif %}
+                                                    <span class="small text-muted">{{ application.opportunity.organization.organization_name }}</span>
+                                                </a>
+                                                <span class="small text-muted">
+                                                    <i class="fas fa-map-marker-alt"></i> {{ application.opportunity.location }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                                            <div class="small text-muted mb-1">Date</div>
+                                            <div>
+                                                {% if application.opportunity.end_date %}
+                                                    {{ application.opportunity.start_date|date:"M d" }} - {{ application.opportunity.end_date|date:"M d, Y" }}
+                                                {% else %}
+                                                    {{ application.opportunity.start_date|date:"M d, Y" }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                                            <div class="small text-muted mb-1">Applied On</div>
+                                            <div>{{ application.created_at|date:"M d, Y" }}</div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-4 text-md-center">
+                                            <span class="badge status-badge-{{ application.status }} mb-2 d-block">
+                                                {{ application.status|title }}
+                                            </span>
+                                            <a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye me-1"></i> View
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <img src="{% static 'images/no-applications.svg' %}" alt="No applications found" class="img-fluid mb-4" style="max-width: 200px;">
+                    <h3 class="h4 mb-3">No applications yet</h3>
+                    <p class="text-muted mb-4">You haven't applied to any volunteer opportunities yet.</p>
+                    <a href="{% url 'opportunity_list' %}" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i> Explore Opportunities
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        background-position: center;
+        background-size: cover;
+    }
+    
+    .applications-stats {
+        margin-bottom: 1.5rem;
+    }
+    
+    .application-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+    
+    .application-item[data-status="pending"] .application-card {
+        border-left-color: #17a2b8;
+    }
+    
+    .application-item[data-status="accepted"] .application-card {
+        border-left-color: #28a745;
+    }
+    
+    .application-item[data-status="declined"] .application-card {
+        border-left-color: #dc3545;
+    }
+    
+    .application-item[data-status="withdrawn"] .application-card {
+        border-left-color: #6c757d;
+    }
+    
+    .application-card:hover {
+        background-color: rgba(0, 0, 0, 0.01);
+    }
+    
+    .filter-buttons {
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+    
+    .filter-buttons .btn {
+        border-radius: 0;
+    }
+    
+    .hidden-status {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter applications by status
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const applicationItems = document.querySelectorAll('.application-item');
+        
+        filterButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(function(btn) {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                // Show/hide applications based on filter
+                applicationItems.forEach(function(item) {
+                    if (filter === 'all') {
+                        item.style.display = 'block';
+                    } else {
+                        if (item.getAttribute('data-status') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('applications-header.svg')) {
+                    img.src = 'https://via.placeholder.com/400x250?text=My+Applications';
+                } else if (img.src.includes('no-applications.svg')) {
+                    img.src = 'https://via.placeholder.com/200x200?text=No+Applications';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
