@@ -1,0 +1,711 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}Application Details | Local Volunteer Network{% endblock %}
+{% block body_class %}application-detail-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="d-flex align-items-center mb-2">
+                    <a href="{% url 'application_list' %}" class="text-white me-3">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="display-5 fw-bold mb-0" data-aos="fade-up">Application Details</h1>
+                </div>
+                <p class="lead mb-0" data-aos="fade-up" data-aos-delay="100">
+                    {% if user.profile.user_type == 'volunteer' %}
+                        Your application for "{{ application.opportunity.title }}"
+                    {% else %}
+                        Application from {{ application.volunteer.user_profile.user.get_full_name }} for "{{ application.opportunity.title }}"
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Application Details Section -->
+<section class="application-details-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left Column - Application Info -->
+            <div class="col-lg-8" data-aos="fade-up">
+                <!-- Status Card -->
+                <div class="card status-card border-0 shadow-sm mb-4
+                    {% if application.status == 'accepted' %}status-card-accepted{% elif application.status == 'declined' %}status-card-declined{% elif application.status == 'pending' %}status-card-pending{% else %}status-card-withdrawn{% endif %}">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                <div class="status-icon mb-2">
+                                    {% if application.status == 'accepted' %}
+                                        <i class="fas fa-check-circle"></i>
+                                    {% elif application.status == 'declined' %}
+                                        <i class="fas fa-times-circle"></i>
+                                    {% elif application.status == 'pending' %}
+                                        <i class="fas fa-hourglass-half"></i>
+                                    {% else %}
+                                        <i class="fas fa-ban"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <h3 class="status-title h5 mb-1">
+                                    Application Status: <span class="status-value">{{ application.status|title }}</span>
+                                </h3>
+                                <p class="status-message mb-0">
+                                    {% if application.status == 'accepted' %}
+                                        Congratulations! Your application has been accepted. Please check the opportunity details for more information.
+                                    {% elif application.status == 'declined' %}
+                                        We're sorry, but your application has not been accepted for this opportunity.
+                                    {% elif application.status == 'pending' %}
+                                        Your application is currently being reviewed. You'll be notified once a decision has been made.
+                                    {% else %}
+                                        This application has been withdrawn.
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                {% if user.profile.user_type == 'organization' and application.opportunity.organization.user_profile.user == user and application.status == 'pending' %}
+                                    <a href="{% url 'update_application' application.id %}" class="btn btn-primary">
+                                        <i class="fas fa-edit me-2"></i> Update Status
+                                    </a>
+                                {% elif user.profile.user_type == 'volunteer' and application.status == 'pending' %}
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+                                        <i class="fas fa-times me-2"></i> Withdraw
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tabs Navigation -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <ul class="nav nav-tabs nav-tabs-custom" id="applicationTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">
+                                    <i class="fas fa-info-circle me-2"></i> Application Details
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="opportunity-tab" data-bs-toggle="tab" data-bs-target="#opportunity" type="button" role="tab" aria-controls="opportunity" aria-selected="false">
+                                    <i class="fas fa-clipboard-list me-2"></i> Opportunity
+                                </button>
+                            </li>
+                            {% if application.status == 'accepted' or application.status == 'declined' %}
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="feedback-tab" data-bs-toggle="tab" data-bs-target="#feedback" type="button" role="tab" aria-controls="feedback" aria-selected="false">
+                                        <i class="fas fa-comment-alt me-2"></i> Feedback
+                                    </button>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        
+                        <!-- Tab Content -->
+                        <div class="tab-content p-4" id="applicationTabContent">
+                            <!-- Details Tab -->
+                            <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                                <div class="application-details">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="detail-item">
+                                                <h4 class="detail-label h6">Application Date</h4>
+                                                <p class="detail-value">{{ application.created_at|date:"F d, Y" }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="detail-item">
+                                                <h4 class="detail-label h6">Last Updated</h4>
+                                                <p class="detail-value">{{ application.updated_at|date:"F d, Y" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="detail-item mb-4">
+                                        <h4 class="detail-label h6">Application Message</h4>
+                                        <div class="message-box p-3 bg-light rounded">
+                                            {% if application.message %}
+                                                <p class="mb-0">{{ application.message|linebreaks }}</p>
+                                            {% else %}
+                                                <p class="text-muted mb-0">No message provided with this application.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    {% if application.organization_feedback and application.status != 'pending' %}
+                                        <div class="detail-item mb-4">
+                                            <h4 class="detail-label h6">Organization Feedback</h4>
+                                            <div class="message-box p-3 bg-light rounded">
+                                                <p class="mb-0">{{ application.organization_feedback|linebreaks }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if user.profile.user_type == 'organization' %}
+                                        <h4 class="h5 mb-3">Volunteer Information</h4>
+                                        <div class="volunteer-skills mb-4">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h5 class="h6 mb-2">Skills</h5>
+                                                    {% if application.volunteer.skills.all %}
+                                                        <div class="d-flex flex-wrap gap-2">
+                                                            {% for skill in application.volunteer.skills.all %}
+                                                                <span class="badge bg-light text-dark">{{ skill.name }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        <p class="text-muted small">No skills specified</p>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5 class="h6 mb-2">Interests</h5>
+                                                    {% if application.volunteer.interests.all %}
+                                                        <div class="d-flex flex-wrap gap-2">
+                                                            {% for interest in application.volunteer.interests.all %}
+                                                                <span class="badge bg-light text-dark">{{ interest.name }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        <p class="text-muted small">No interests specified</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Opportunity Tab -->
+                            <div class="tab-pane fade" id="opportunity" role="tabpanel" aria-labelledby="opportunity-tab">
+                                <div class="opportunity-details">
+                                    <h4 class="h5 mb-3">{{ application.opportunity.title }}</h4>
+                                    
+                                    <div class="d-flex flex-wrap mb-4 gap-4">
+                                        <div class="opportunity-meta-item">
+                                            <div class="small text-muted">Organization</div>
+                                            <div class="fw-medium">{{ application.opportunity.organization.organization_name }}</div>
+                                        </div>
+                                        <div class="opportunity-meta-item">
+                                            <div class="small text-muted">Location</div>
+                                            <div class="fw-medium">{{ application.opportunity.location }}</div>
+                                        </div>
+                                        <div class="opportunity-meta-item">
+                                            <div class="small text-muted">Date</div>
+                                            <div class="fw-medium">
+                                                {% if application.opportunity.end_date %}
+                                                    {{ application.opportunity.start_date|format_date_range:application.opportunity.end_date }}
+                                                {% else %}
+                                                    {{ application.opportunity.start_date|date:"F d, Y" }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="opportunity-meta-item">
+                                            <div class="small text-muted">Time</div>
+                                            <div class="fw-medium">
+                                                {% if application.opportunity.start_time and application.opportunity.end_time %}
+                                                    {{ application.opportunity.start_time|format_time_range:application.opportunity.end_time }}
+                                                {% else %}
+                                                    Not specified
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h5 class="h6 mb-2">Description</h5>
+                                        <div class="p-3 bg-light rounded">
+                                            {{ application.opportunity.description|linebreaks }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <h5 class="h6 mb-2">Required Skills</h5>
+                                            {% if application.opportunity.required_skills.all %}
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    {% for skill in application.opportunity.required_skills.all %}
+                                                        <span class="badge bg-light text-dark">{{ skill.name }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <p class="text-muted small">No specific skills required</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5 class="h6 mb-2">Related Causes</h5>
+                                            {% if application.opportunity.interests.all %}
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    {% for interest in application.opportunity.interests.all %}
+                                                        <span class="badge bg-light text-dark">{{ interest.name }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <p class="text-muted small">No specific interests listed</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center">
+                                        <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-external-link-alt me-2"></i> View Full Opportunity
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Feedback Tab -->
+                            {% if application.status == 'accepted' or application.status == 'declined' %}
+                                <div class="tab-pane fade" id="feedback" role="tabpanel" aria-labelledby="feedback-tab">
+                                    <div class="feedback-section">
+                                        {% if application.organization_feedback %}
+                                            <div class="feedback-item mb-4">
+                                                <h4 class="h5 mb-3">Organization Feedback</h4>
+                                                <div class="p-3 bg-light rounded">
+                                                    {{ application.organization_feedback|linebreaks }}
+                                                </div>
+                                                {% if application.organization_rating %}
+                                                    <div class="mt-2">
+                                                        <div class="small text-muted mb-1">Rating</div>
+                                                        <div class="rating">
+                                                            {% for i in "12345" %}
+                                                                {% if forloop.counter <= application.organization_rating %}
+                                                                    <i class="fas fa-star text-warning"></i>
+                                                                {% else %}
+                                                                    <i class="far fa-star text-warning"></i>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                No feedback has been provided by the organization yet.
+                                            </div>
+                                        {% endif %}
+                                        
+                                        {% if user.profile.user_type == 'volunteer' and application.status == 'accepted' %}
+                                            {% if application.volunteer_feedback %}
+                                                <div class="feedback-item mb-4">
+                                                    <h4 class="h5 mb-3">Your Feedback</h4>
+                                                    <div class="p-3 bg-light rounded">
+                                                        {{ application.volunteer_feedback|linebreaks }}
+                                                    </div>
+                                                    {% if application.volunteer_rating %}
+                                                        <div class="mt-2">
+                                                            <div class="small text-muted mb-1">Your Rating</div>
+                                                            <div class="rating">
+                                                                {% for i in "12345" %}
+                                                                    {% if forloop.counter <= application.volunteer_rating %}
+                                                                        <i class="fas fa-star text-warning"></i>
+                                                                    {% else %}
+                                                                        <i class="far fa-star text-warning"></i>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% else %}
+                                                <div class="feedback-item">
+                                                    <h4 class="h5 mb-3">Share Your Experience</h4>
+                                                    <p class="mb-3">Please take a moment to provide feedback about your volunteering experience. Your insights help improve future opportunities.</p>
+                                                    <a href="{% url 'add_feedback' application.id %}" class="btn btn-primary">
+                                                        <i class="fas fa-comment-alt me-2"></i> Provide Feedback
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                        
+                                        {% if user.profile.user_type == 'organization' and application.status == 'accepted' %}
+                                            {% if application.volunteer_feedback %}
+                                                <div class="feedback-item mb-4">
+                                                    <h4 class="h5 mb-3">Volunteer Feedback</h4>
+                                                    <div class="p-3 bg-light rounded">
+                                                        {{ application.volunteer_feedback|linebreaks }}
+                                                    </div>
+                                                    {% if application.volunteer_rating %}
+                                                        <div class="mt-2">
+                                                            <div class="small text-muted mb-1">Volunteer Rating</div>
+                                                            <div class="rating">
+                                                                {% for i in "12345" %}
+                                                                    {% if forloop.counter <= application.volunteer_rating %}
+                                                                        <i class="fas fa-star text-warning"></i>
+                                                                    {% else %}
+                                                                        <i class="far fa-star text-warning"></i>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% else %}
+                                                <div class="alert alert-info">
+                                                    <i class="fas fa-info-circle me-2"></i>
+                                                    The volunteer has not provided feedback yet.
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Sidebar -->
+            <div class="col-lg-4">
+                <!-- Profile Card -->
+                {% if user.profile.user_type == 'organization' %}
+                    <div class="card profile-card border-0 shadow-sm mb-4" data-aos="fade-left">
+                        <div class="card-body p-4 text-center">
+                            <h3 class="h5 card-title mb-3">
+                                <i class="fas fa-user me-2 text-primary"></i> Volunteer
+                            </h3>
+                            {% if application.volunteer.user_profile.profile_picture %}
+                                <img src="{{ application.volunteer.user_profile.profile_picture.url }}" alt="{{ application.volunteer.user_profile.user.get_full_name }}" class="rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            {% else %}
+                                <div class="avatar-placeholder mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                                    {{ application.volunteer.user_profile.user.first_name|first|upper }}{{ application.volunteer.user_profile.user.last_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            <h4 class="h5 mb-1">{{ application.volunteer.user_profile.user.get_full_name }}</h4>
+                            <p class="text-muted small mb-3">
+                                <i class="fas fa-envelope me-1"></i> {{ application.volunteer.user_profile.user.email }}
+                            </p>
+                            
+                            <hr class="my-3">
+                            
+                            <p class="small mb-3">{{ application.volunteer.user_profile.bio|default:"No bio provided."|truncatechars:150 }}</p>
+                            
+                            <a href="{% url 'volunteer_detail' application.volunteer.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i> View Full Profile
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card profile-card border-0 shadow-sm mb-4" data-aos="fade-left">
+                        <div class="card-body p-4 text-center">
+                            <h3 class="h5 card-title mb-3">
+                                <i class="fas fa-building me-2 text-primary"></i> Organization
+                            </h3>
+                            {% if application.opportunity.organization.user_profile.profile_picture %}
+                                <img src="{{ application.opportunity.organization.user_profile.profile_picture.url }}" alt="{{ application.opportunity.organization.organization_name }}" class="rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            {% else %}
+                                <div class="avatar-placeholder mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                                    {{ application.opportunity.organization.organization_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            <h4 class="h5 mb-1">{{ application.opportunity.organization.organization_name }}</h4>
+                            <p class="text-muted small mb-3">
+                                <i class="fas fa-map-marker-alt me-1"></i> {{ application.opportunity.organization.user_profile.address|default:"Location not specified" }}
+                            </p>
+                            
+                            {% if application.opportunity.organization.is_verified %}
+                                <div class="badge bg-success mb-3">
+                                    <i class="fas fa-check-circle me-1"></i> Verified Organization
+                                </div>
+                            {% endif %}
+                            
+                            <hr class="my-3">
+                            
+                            <p class="small mb-3">{{ application.opportunity.organization.mission|default:"No mission statement provided."|truncatechars:150 }}</p>
+                            
+                            <a href="{% url 'organization_detail' application.opportunity.organization.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i> View Organization
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <!-- Key Dates Card -->
+                <div class="card border-0 shadow-sm mb-4" data-aos="fade-left" data-aos-delay="100">
+                    <div class="card-body p-4">
+                        <h3 class="h5 card-title mb-3">
+                            <i class="fas fa-calendar-alt me-2 text-primary"></i> Key Dates
+                        </h3>
+                        <ul class="timeline">
+                            <li class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h4 class="h6 mb-0">Application Submitted</h4>
+                                    <p class="small text-muted mb-0">{{ application.created_at|date:"F d, Y" }}</p>
+                                </div>
+                            </li>
+                            {% if application.status != 'pending' %}
+                                <li class="timeline-item">
+                                    <div class="timeline-marker 
+                                        {% if application.status == 'accepted' %}bg-success{% elif application.status == 'declined' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h4 class="h6 mb-0">Status Updated to {{ application.status|title }}</h4>
+                                        <p class="small text-muted mb-0">{{ application.updated_at|date:"F d, Y" }}</p>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            {% if application.status == 'accepted' %}
+                                <li class="timeline-item">
+                                    <div class="timeline-marker bg-primary"></div>
+                                    <div class="timeline-content">
+                                        <h4 class="h6 mb-0">Opportunity Date</h4>
+                                        <p class="small text-muted mb-0">
+                                            {% if application.opportunity.end_date %}
+                                                {{ application.opportunity.start_date|date:"F d" }} - {{ application.opportunity.end_date|date:"F d, Y" }}
+                                            {% else %}
+                                                {{ application.opportunity.start_date|date:"F d, Y" }}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Actions Card -->
+                <div class="card border-0 shadow-sm" data-aos="fade-left" data-aos-delay="200">
+                    <div class="card-body p-4">
+                        <h3 class="h5 card-title mb-3">
+                            <i class="fas fa-cog me-2 text-primary"></i> Actions
+                        </h3>
+                        <div class="d-grid gap-2">
+                            {% if user.profile.user_type == 'organization' and application.opportunity.organization.user_profile.user == user and application.status == 'pending' %}
+                                <a href="{% url 'update_application' application.id %}" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i> Update Application Status
+                                </a>
+                            {% elif user.profile.user_type == 'volunteer' and application.status == 'pending' %}
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+                                    <i class="fas fa-times me-2"></i> Withdraw Application
+                                </button>
+                            {% endif %}
+                            
+                            {% if application.status == 'accepted' and user.profile.user_type == 'volunteer' and not application.volunteer_feedback %}
+                                <a href="{% url 'add_feedback' application.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-comment-alt me-2"></i> Provide Feedback
+                                </a>
+                            {% endif %}
+                            
+                            <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-clipboard-list me-2"></i> View Opportunity
+                            </a>
+                            
+                            {% if user.profile.user_type == 'volunteer' %}
+                                <a href="{% url 'application_list' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-list me-2"></i> My Applications
+                                </a>
+                            {% else %}
+                                <a href="{% url 'application_list' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-list me-2"></i> All Applications
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Withdraw Application Modal -->
+{% if user.profile.user_type == 'volunteer' and application.status == 'pending' %}
+    <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="withdrawModalLabel">Withdraw Application</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to withdraw your application for "{{ application.opportunity.title }}"?</p>
+                    <p class="text-danger">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" action="{% url 'update_application' application.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="withdrawn">
+                        <button type="submit" class="btn btn-danger">Withdraw Application</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        padding-top: 100px;
+        padding-bottom: 100px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .status-card {
+        border-left: 4px solid transparent;
+    }
+    
+    .status-card-accepted {
+        border-left-color: #28a745;
+    }
+    
+    .status-card-declined {
+        border-left-color: #dc3545;
+    }
+    
+    .status-card-pending {
+        border-left-color: #17a2b8;
+    }
+    
+    .status-card-withdrawn {
+        border-left-color: #6c757d;
+    }
+    
+    .status-icon {
+        font-size: 2.5rem;
+    }
+    
+    .status-card-accepted .status-icon {
+        color: #28a745;
+    }
+    
+    .status-card-declined .status-icon {
+        color: #dc3545;
+    }
+    
+    .status-card-pending .status-icon {
+        color: #17a2b8;
+    }
+    
+    .status-card-withdrawn .status-icon {
+        color: #6c757d;
+    }
+    
+    .status-value {
+        font-weight: 600;
+    }
+    
+    .nav-tabs-custom {
+        border-bottom: none;
+    }
+    
+    .nav-tabs-custom .nav-link {
+        border: none;
+        color: var(--dark);
+        font-weight: 500;
+        padding: 15px 20px;
+    }
+    
+    .nav-tabs-custom .nav-link.active {
+        color: var(--primary);
+        border-bottom: 2px solid var(--primary);
+        background-color: transparent;
+    }
+    
+    .detail-label {
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .detail-value {
+        font-weight: 500;
+        margin-bottom: 0;
+    }
+    
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+        list-style: none;
+        margin-bottom: 0;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+    }
+    
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        left: -30px;
+        background-color: var(--primary);
+        border-radius: 50%;
+    }
+    
+    .timeline-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: -23px;
+        top: 15px;
+        height: 100%;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    
+    .rating {
+        color: #ffc107;
+    }
+    
+    .avatar-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fix missing images
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                // Replace profile pictures with initials
+                if (img.classList.contains('rounded-circle')) {
+                    const parent = img.parentElement;
+                    if (parent) {
+                        const initials = img.alt ? img.alt.split(' ').map(name => name[0]).join('').toUpperCase() : 'U';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'avatar-placeholder';
+                        placeholder.style.width = img.style.width || '80px';
+                        placeholder.style.height = img.style.height || '80px';
+                        placeholder.style.fontSize = '2rem';
+                        placeholder.textContent = initials;
+                        parent.replaceChild(placeholder, img);
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
