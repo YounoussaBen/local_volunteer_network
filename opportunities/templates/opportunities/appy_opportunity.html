@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+
+{% block title %}Apply for {{ opportunity.title }} | Local Volunteer Network{% endblock %}
+{% block body_class %}apply-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto text-center">
+                <h1 class="display-5 fw-bold mb-4" data-aos="fade-up">Apply for Opportunity</h1>
+                <p class="lead mb-0" data-aos="fade-up" data-aos-delay="100">Submit your application for "{{ opportunity.title }}"</p>
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Application Form Section -->
+<section class="application-form-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <h2 class="h3 mb-4">Application Form</h2>
+                        
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="form-group mb-4">
+                                <label for="{{ form.message.id_for_label }}" class="form-label fw-medium">
+                                    Why do you want to volunteer for this opportunity?
+                                </label>
+                                <div class="form-text mb-2">
+                                    Explain why you're interested and how your skills align with this opportunity.
+                                </div>
+                                {{ form.message|as_crispy_field }}
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <h5 class="h6 mb-3">Your Skills & Interests</h5>
+                                <div class="skills-info p-3 bg-light rounded">
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <h6 class="small fw-medium mb-2">
+                                                <i class="fas fa-tools text-primary me-2"></i> Your Skills
+                                            </h6>
+                                            <div class="skills-list">
+                                                {% if volunteer_profile.skills.all %}
+                                                    {% for skill in volunteer_profile.skills.all %}
+                                                        <span class="badge bg-light text-dark mb-1 me-1">{{ skill.name }}</span>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <p class="small text-muted mb-0">
+                                                        No skills added to your profile.
+                                                        <a href="{% url 'edit_volunteer_profile' %}">Update profile</a>
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="small fw-medium mb-2">
+                                                <i class="fas fa-heart text-primary me-2"></i> Your Interests
+                                            </h6>
+                                            <div class="interests-list">
+                                                {% if volunteer_profile.interests.all %}
+                                                    {% for interest in volunteer_profile.interests.all %}
+                                                        <span class="badge bg-light text-dark mb-1 me-1">{{ interest.name }}</span>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <p class="small text-muted mb-0">
+                                                        No interests added to your profile.
+                                                        <a href="{% url 'edit_volunteer_profile' %}">Update profile</a>
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-info small mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        The organization will see your skills and interests as part of your application.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                    <label class="form-check-label" for="termsCheck">
+                                        I understand that by applying, I am committing to attend if accepted.
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        You must agree before submitting.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{% url 'opportunity_detail' opportunity.id %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Back to Opportunity
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i> Submit Application
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <!-- Opportunity Summary Card -->
+                <div class="card shadow-sm border-0 mb-4" data-aos="fade-left">
+                    <div class="card-body p-4">
+                        <h3 class="h5 card-title mb-3">
+                            <i class="fas fa-clipboard-list me-2 text-primary"></i> Opportunity Summary
+                        </h3>
+                        <h4 class="h5 mb-3">{{ opportunity.title }}</h4>
+                        
+                        <div class="summary-item d-flex align-items-center mb-3">
+                            <div class="icon-box bg-light me-3">
+                                <i class="fas fa-building text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Organization</div>
+                                <div>{{ opportunity.organization.organization_name }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-item d-flex align-items-center mb-3">
+                            <div class="icon-box bg-light me-3">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Location</div>
+                                <div>{{ opportunity.location }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-item d-flex align-items-center mb-3">
+                            <div class="icon-box bg-light me-3">
+                                <i class="fas fa-calendar-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Date</div>
+                                <div>
+                                    {% if opportunity.end_date %}
+                                        {{ opportunity.start_date|format_date_range:opportunity.end_date }}
+                                    {% else %}
+                                        {{ opportunity.start_date|date:"F d, Y" }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-item d-flex align-items-center mb-3">
+                            <div class="icon-box bg-light me-3">
+                                <i class="fas fa-clock text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Time</div>
+                                <div>
+                                    {% if opportunity.start_time and opportunity.end_time %}
+                                        {{ opportunity.start_time|format_time_range:opportunity.end_time }}
+                                    {% else %}
+                                        Time not specified
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-item d-flex align-items-center">
+                            <div class="icon-box bg-light me-3">
+                                <i class="fas fa-users text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Positions</div>
+                                <div>{{ opportunity.positions_filled }}/{{ opportunity.positions }} positions filled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Application Tips Card -->
+                <div class="card shadow-sm border-0" data-aos="fade-left" data-aos-delay="100">
+                    <div class="card-body p-4">
+                        <h3 class="h5 card-title mb-3">
+                            <i class="fas fa-lightbulb me-2 text-primary"></i> Application Tips
+                        </h3>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Be specific</strong> about why you're interested in this opportunity.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Highlight relevant experience</strong> or skills that match the requirements.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Mention your availability</strong> if there are specific days or times you can volunteer.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Explain your motivation</strong> and what you hope to gain from the experience.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Ask questions</strong> if you need more information about the role.
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        padding-top: 120px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .icon-box {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.from(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+    });
+</script>
+{% endblock %}
