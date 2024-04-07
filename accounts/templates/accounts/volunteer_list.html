@@ -1,0 +1,396 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}Volunteers | Local Volunteer Network{% endblock %}
+{% block body_class %}volunteer-list-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-5 fw-bold mb-3">Volunteers</h1>
+                <p class="lead mb-0">Discover skilled volunteers ready to make a difference in Accra</p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
+                <img src="{% static 'images/volunteers-header.svg' %}" alt="Volunteers" class="img-fluid" style="max-height: 250px;">
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Search and Filter Section -->
+<section class="filters-section py-4 bg-light-gray">
+    <div class="container">
+        <form id="volunteer-search-form" method="get" action="{% url 'volunteer_list' %}">
+            <div class="card shadow-sm border-0" data-aos="fade-up">
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="form-group mb-0">
+                                <label for="search" class="form-label">Search</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control" id="search" name="q" placeholder="Search by name..." value="{{ query|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group mb-0">
+                                <label for="location" class="form-label">Location</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control" id="location" name="location" placeholder="Area in Accra" value="{{ location|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-2"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Volunteers List Section -->
+<section class="volunteers-section py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="h4 mb-0" data-aos="fade-right">
+                    {% if query or location or selected_skill_ids or selected_interest_ids %}
+                        Search Results
+                    {% else %}
+                        Available Volunteers
+                    {% endif %}
+                </h2>
+                <p class="text-muted mb-0" data-aos="fade-right" data-aos-delay="100">
+                    Found {{ volunteers|length }} volunteers
+                    {% if query or location or selected_skill_ids or selected_interest_ids %}
+                        matching your criteria
+                    {% endif %}
+                </p>
+            </div>
+            <div class="d-flex align-items-center" data-aos="fade-left">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" id="grid-view">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="list-view">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        {% if query or location or selected_skill_ids or selected_interest_ids %}
+            <div class="active-filters mb-4" data-aos="fade-up">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="text-muted me-2">Active filters:</span>
+                    
+                    {% if query %}
+                        <span class="badge rounded-pill bg-light text-dark py-2 px-3">
+                            <i class="fas fa-search me-1"></i> {{ query }}
+                            <a href="?{% url_replace request 'q' '' %}" class="ms-2 text-dark"><i class="fas fa-times"></i></a>
+                        </span>
+                    {% endif %}
+                    
+                    {% if location %}
+                        <span class="badge rounded-pill bg-light text-dark py-2 px-3">
+                            <i class="fas fa-map-marker-alt me-1"></i> {{ location }}
+                            <a href="?{% url_replace request 'location' '' %}" class="ms-2 text-dark"><i class="fas fa-times"></i></a>
+                        </span>
+                    {% endif %}
+                    
+                    {% for skill_id in selected_skill_ids %}
+                        {% for skill in all_skills %}
+                            {% if skill.id == skill_id %}
+                                <span class="badge rounded-pill bg-light text-dark py-2 px-3">
+                                    <i class="fas fa-tools me-1"></i> {{ skill.name }}
+                                    <a href="?{% url_remove_from_list request 'skills' skill_id %}" class="ms-2 text-dark"><i class="fas fa-times"></i></a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    
+                    {% for interest_id in selected_interest_ids %}
+                        {% for interest in all_interests %}
+                            {% if interest.id == interest_id %}
+                                <span class="badge rounded-pill bg-light text-dark py-2 px-3">
+                                    <i class="fas fa-heart me-1"></i> {{ interest.name }}
+                                    <a href="?{% url_remove_from_list request 'interests' interest_id %}" class="ms-2 text-dark"><i class="fas fa-times"></i></a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    
+                    {% if query or location or selected_skill_ids or selected_interest_ids %}
+                        <a href="{% url 'volunteer_list' %}" class="btn btn-sm btn-outline-secondary ms-auto">
+                            <i class="fas fa-times me-1"></i> Clear All
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        
+        {% if volunteers %}
+            <div id="grid-view-container">
+                <div class="row g-4">
+                    {% for volunteer in volunteers %}
+                        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                            <div class="card volunteer-card h-100">
+                                <div class="card-body text-center p-4">
+                                    <div class="volunteer-avatar mb-3">
+                                        {% if volunteer.user_profile.profile_picture %}
+                                            <img src="{{ volunteer.user_profile.profile_picture.url }}" alt="{{ volunteer.user_profile.user.get_full_name }}" class="rounded-circle">
+                                        {% else %}
+                                            <div class="avatar-placeholder">
+                                                {{ volunteer.user_profile.user.first_name|first|upper }}{{ volunteer.user_profile.user.last_name|first|upper }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <h3 class="card-title h5 mb-1">{{ volunteer.user_profile.user.get_full_name }}</h3>
+                                    
+                                    <p class="text-muted mb-3">
+                                        <i class="fas fa-map-marker-alt me-1"></i> {{ volunteer.user_profile.address|default:"Location not specified" }}
+                                    </p>
+                                    
+                                    <div class="volunteer-skills mb-3">
+                                        {% for skill in volunteer.skills.all|slice:":3" %}
+                                            <span class="badge bg-light text-dark me-1 mb-1">{{ skill.name }}</span>
+                                        {% endfor %}
+                                        {% if volunteer.skills.count > 3 %}
+                                            <span class="badge bg-light text-dark">+{{ volunteer.skills.count|add:"-3" }}</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="volunteer-bio mb-3">
+                                        <p class="small text-muted">{{ volunteer.user_profile.bio|default:"No bio provided."|truncatechars:80 }}</p>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white text-center">
+                                    <a href="{% url 'volunteer_detail' volunteer.id %}" class="btn btn-outline-primary">
+                                        View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div id="list-view-container" class="d-none">
+                <div class="card shadow-sm border-0" data-aos="fade-up">
+                    <div class="list-group list-group-flush">
+                        {% for volunteer in volunteers %}
+                            <div class="list-group-item p-4 volunteer-list-item">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-7">
+                                        <div class="d-flex align-items-center">
+                                            {% if volunteer.user_profile.profile_picture %}
+                                                <img src="{{ volunteer.user_profile.profile_picture.url }}" alt="{{ volunteer.user_profile.user.get_full_name }}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="avatar-placeholder me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                                    {{ volunteer.user_profile.user.first_name|first|upper }}{{ volunteer.user_profile.user.last_name|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <h3 class="h5 mb-1">
+                                                    <a href="{% url 'volunteer_detail' volunteer.id %}" class="text-decoration-none">
+                                                        {{ volunteer.user_profile.user.get_full_name }}
+                                                    </a>
+                                                </h3>
+                                                <p class="mb-0 small text-muted">
+                                                    <i class="fas fa-map-marker-alt me-1"></i> {{ volunteer.user_profile.address|default:"Location not specified" }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mt-3 mt-lg-0">
+                                        <div class="volunteer-skills">
+                                            {% for skill in volunteer.skills.all|slice:":4" %}
+                                                <span class="badge bg-light text-dark me-1 mb-1">{{ skill.name }}</span>
+                                            {% endfor %}
+                                            {% if volunteer.skills.count > 4 %}
+                                                <span class="badge bg-light text-dark">+{{ volunteer.skills.count|add:"-4" }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 text-lg-end mt-3 mt-lg-0">
+                                        <a href="{% url 'volunteer_detail' volunteer.id %}" class="btn btn-outline-primary">
+                                            View Profile
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5" data-aos="fade-up">
+                <img src="{% static 'images/no-results.svg' %}" alt="No results found" class="img-fluid mb-4" style="max-width: 200px;">
+                <h3 class="h4 mb-3">No volunteers found</h3>
+                <p class="text-muted mb-4">We couldn't find any volunteers matching your criteria. Try adjusting your filters or search terms.</p>
+                <a href="{% url 'volunteer_list' %}" class="btn btn-primary">
+                    <i class="fas fa-sync-alt me-2"></i> Reset Search
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .volunteer-card {
+        transition: all 0.3s ease;
+        border-radius: var(--border-radius);
+    }
+    
+    .volunteer-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+    }
+    
+    .volunteer-avatar {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .volunteer-avatar img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border: 3px solid #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 600;
+        border: 3px solid #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .volunteer-list-item {
+        transition: all 0.3s ease;
+    }
+    
+    .volunteer-list-item:hover {
+        background-color: rgba(0, 0, 0, 0.01);
+    }
+    
+    .volunteer-skills {
+        min-height: 50px;
+    }
+    
+    .bg-light-gray {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // View toggle functionality
+        const gridView = document.getElementById('grid-view');
+        const listView = document.getElementById('list-view');
+        const gridContainer = document.getElementById('grid-view-container');
+        const listContainer = document.getElementById('list-view-container');
+        
+        gridView.addEventListener('click', function() {
+            gridView.classList.add('active');
+            listView.classList.remove('active');
+            gridContainer.classList.remove('d-none');
+            listContainer.classList.add('d-none');
+        });
+        
+        listView.addEventListener('click', function() {
+            listView.classList.add('active');
+            gridView.classList.remove('active');
+            listContainer.classList.remove('d-none');
+            gridContainer.classList.add('d-none');
+        });
+        
+        // Clear filters button
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.form-check-input[type="checkbox"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = false;
+                });
+            });
+        }
+        
+        // Handle image errors
+        document.querySelectorAll('img').forEach(function(img) {
+            img.addEventListener('error', function() {
+                if (img.src.includes('volunteers-header.svg')) {
+                    img.src = 'https://via.placeholder.com/600x300?text=Volunteers';
+                } else if (img.src.includes('no-results.svg')) {
+                    img.src = 'https://via.placeholder.com/200x200?text=No+Results';
+                } else if (img.classList.contains('rounded-circle')) {
+                    // Replace profile pictures with initials
+                    const parent = img.parentElement;
+                    if (parent) {
+                        const altText = img.alt || '';
+                        const initials = altText.split(' ').map(name => name[0]).join('').toUpperCase().substring(0, 2) || 'U';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'avatar-placeholder';
+                        if (img.style.width) {
+                            placeholder.style.width = img.style.width;
+                            placeholder.style.height = img.style.height;
+                            if (parseInt(img.style.width) < 80) {
+                                placeholder.style.fontSize = '1rem';
+                            }
+                        }
+                        placeholder.textContent = initials;
+                        parent.replaceChild(placeholder, img);
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
