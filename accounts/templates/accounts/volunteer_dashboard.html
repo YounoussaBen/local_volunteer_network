@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}Volunteer Dashboard | Local Volunteer Network{% endblock %}
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block content %}
+<section class="dashboard-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold mb-2" data-aos="fade-right">Welcome, {{ user.first_name }}!</h1>
+                <p class="lead" data-aos="fade-right" data-aos-delay="100">Your volunteer dashboard gives you quick access to opportunities, applications, and more.</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-4 mt-md-0" data-aos="fade-left">
+                <a href="{% url 'opportunity_list' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-search"></i> Find Opportunities
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="dashboard-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Left Column - User Stats and Quick Links -->
+            <div class="col-lg-4 mb-4">
+                <!-- Profile Summary Card -->
+                <div class="dashboard-card mb-4" data-aos="fade-up">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if user.profile.profile_picture %}
+                            <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="avatar-img me-3" style="width: 60px; height: 60px;">
+                        {% else %}
+                            <div class="avatar-placeholder me-3" style="width: 60px; height: 60px; font-size: 1.25rem;">
+                                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-0">{{ user.get_full_name }}</h5>
+                            <p class="text-muted mb-0">Volunteer</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{% url 'view_profile' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-user-edit me-2"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Application Stats -->
+                <div class="dashboard-card" data-aos="fade-up" data-aos-delay="100">
+                    <h5 class="dashboard-card-title">
+                        <i class="fas fa-chart-pie me-2"></i> Your Applications
+                    </h5>
+                    <div class="row g-3 text-center">
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-light">
+                                <h3 class="mb-0">{{ application_stats.total }}</h3>
+                                <p class="small text-muted mb-0">Total</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-light">
+                                <h3 class="mb-0">{{ application_stats.pending }}</h3>
+                                <p class="small text-muted mb-0">Pending</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-light">
+                                <h3 class="mb-0">{{ application_stats.accepted }}</h3>
+                                <p class="small text-muted mb-0">Accepted</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-light">
+                                <h3 class="mb-0">{{ application_stats.declined }}</h3>
+                                <p class="small text-muted mb-0">Declined</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid mt-3">
+                        <a href="{% url 'application_list' %}" class="btn btn-primary">
+                            View All Applications
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Recommended Opportunities and Recent Applications -->
+            <div class="col-lg-8">
+                <!-- Upcoming Commitments -->
+                <div class="dashboard-card mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <h5 class="dashboard-card-title">
+                        <i class="fas fa-calendar-check me-2"></i> Upcoming Commitments
+                        <a href="{% url 'application_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </h5>
+                    
+                    {% if upcoming_commitments %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Opportunity</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for application in upcoming_commitments %}
+                                        {% with opportunity=application.opportunity %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'opportunity_detail' opportunity.id %}" class="fw-medium text-decoration-none">
+                                                    {{ opportunity.title }}
+                                                </a>
+                                                <div class="small text-muted">{{ opportunity.organization.organization_name }}</div>
+                                            </td>
+                                            <td>
+                                                {% if opportunity.end_date %}
+                                                    {{ opportunity.start_date|format_date_range:opportunity.end_date }}
+                                                {% else %}
+                                                    {{ opportunity.start_date|date:"M d, Y" }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ opportunity.location }}</td>
+                                            <td>
+                                                <a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            You don't have any upcoming commitments. Start applying for opportunities!
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Recommended Opportunities -->
+                <div class="dashboard-card" data-aos="fade-up" data-aos-delay="300">
+                    <h5 class="dashboard-card-title">
+                        <i class="fas fa-lightbulb me-2"></i> Recommended For You
+                        <a href="{% url 'opportunity_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </h5>
+                    
+                    {% if recommended_opportunities %}
+                        <div class="row g-3">
+                            {% for opportunity in recommended_opportunities %}
+                                <div class="col-md-6">
+                                    <div class="card opportunity-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ opportunity.title }}</h6>
+                                            <div class="opportunity-location mb-2">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <span>{{ opportunity.location }}</span>
+                                            </div>
+                                            <p class="card-text small">{{ opportunity.description|truncatechars:80 }}</p>
+                                            <div class="d-flex align-items-center justify-content-between mt-3">
+                                                <span class="small text-muted">{{ opportunity.start_date|date:"M d, Y" }}</span>
+                                                <a href="{% url 'opportunity_detail' opportunity.id %}" class="btn btn-sm btn-outline-primary">
+                                                    View Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Add more skills and interests to your profile to get personalized recommendations.
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Recent Applications -->
+                <div class="dashboard-card mt-4" data-aos="fade-up" data-aos-delay="400">
+                    <h5 class="dashboard-card-title">
+                        <i class="fas fa-clipboard-list me-2"></i> Recent Applications
+                        <a href="{% url 'application_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </h5>
+                    
+                    {% if applications %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Opportunity</th>
+                                        <th>Applied On</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for application in applications %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="fw-medium text-decoration-none">
+                                                    {{ application.opportunity.title }}
+                                                </a>
+                                                <div class="small text-muted">{{ application.opportunity.organization.organization_name }}</div>
+                                            </td>
+                                            <td>{{ application.created_at|date:"M d, Y" }}</td>
+                                            <td>
+                                                <span class="badge status-badge-{{ application.status }}">
+                                                    {{ application.status|title }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            You haven't applied to any opportunities yet. Start exploring!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
