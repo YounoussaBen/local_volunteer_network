@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+
+{% block title %}Update Application Status | Local Volunteer Network{% endblock %}
+{% block body_class %}update-application-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="d-flex align-items-center mb-2">
+                    <a href="{% url 'application_detail' application.id %}" class="text-white me-3">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="display-5 fw-bold mb-0">Update Application Status</h1>
+                </div>
+                <p class="lead mb-0">Manage the application from {{ application.volunteer.user_profile.user.get_full_name }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Update Form Section -->
+<section class="form-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10" data-aos="fade-up">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="application-summary mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h2 class="h4 mb-3">Application for "{{ application.opportunity.title }}"</h2>
+                                    <div class="d-flex flex-wrap gap-3 mb-3">
+                                        <div class="meta-item">
+                                            <i class="fas fa-user text-primary me-2"></i>
+                                            <span class="fw-medium">{{ application.volunteer.user_profile.user.get_full_name }}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                            <span>Applied on {{ application.created_at|date:"M d, Y" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <span class="badge status-badge-{{ application.status }} fs-6 py-2 px-3">
+                                        {{ application.status|title }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="application-message p-3 bg-light rounded mb-4">
+                            <h3 class="h5 mb-2">Applicant's Message</h3>
+                            {% if application.message %}
+                                <p class="mb-0">{{ application.message|linebreaks }}</p>
+                            {% else %}
+                                <p class="text-muted mb-0">No message provided with this application.</p>
+                            {% endif %}
+                        </div>
+                        
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="mb-4">
+                                <h3 class="h5 mb-3">Update Status</h3>
+                                
+                                <div class="status-options mb-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="statusAccepted" value="accepted" {% if application.status == 'accepted' %}checked{% endif %} required>
+                                        <label class="form-check-label" for="statusAccepted">
+                                            <i class="fas fa-check-circle text-success me-1"></i> Accept
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="statusDeclined" value="declined" {% if application.status == 'declined' %}checked{% endif %} required>
+                                        <label class="form-check-label" for="statusDeclined">
+                                            <i class="fas fa-times-circle text-danger me-1"></i> Decline
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="statusPending" value="pending" {% if application.status == 'pending' %}checked{% endif %} required>
+                                        <label class="form-check-label" for="statusPending">
+                                            <i class="fas fa-hourglass-half text-warning me-1"></i> Keep as Pending
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="status-description mt-3 mb-4" id="statusDescription">
+                                    <div class="card p-3 border-0 bg-light-info d-none" id="acceptedDescription">
+                                        <div class="d-flex">
+                                            <div class="me-3 text-success">
+                                                <i class="fas fa-info-circle"></i>
+                                            </div>
+                                            <div>
+                                                <p class="mb-0">Accepting this application will:</p>
+                                                <ul class="mb-0 small">
+                                                    <li>Reserve a position for this volunteer</li>
+                                                    <li>Send a notification to the volunteer</li>
+                                                    <li>Update your opportunity's filled positions count</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card p-3 border-0 bg-light-danger d-none" id="declinedDescription">
+                                        <div class="d-flex">
+                                            <div class="me-3 text-danger">
+                                                <i class="fas fa-info-circle"></i>
+                                            </div>
+                                            <div>
+                                                <p class="mb-0">Declining this application will:</p>
+                                                <ul class="mb-0 small">
+                                                    <li>Reject this volunteer for the opportunity</li>
+                                                    <li>Send a notification to the volunteer</li>
+                                                    <li>Allow them to apply for other opportunities</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card p-3 border-0 bg-light-warning d-none" id="pendingDescription">
+                                        <div class="d-flex">
+                                            <div class="me-3 text-warning">
+                                                <i class="fas fa-info-circle"></i>
+                                            </div>
+                                            <div>
+                                                <p class="mb-0">Keeping as pending will:</p>
+                                                <ul class="mb-0 small">
+                                                    <li>Maintain the current application status</li>
+                                                    <li>No notifications will be sent to the volunteer</li>
+                                                    <li>The volunteer will continue to wait for your decision</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.organization_feedback.id_for_label }}" class="form-label">
+                                        Feedback to Volunteer
+                                        <span class="text-muted">(Optional)</span>
+                                    </label>
+                                    {{ form.organization_feedback }}
+                                    <div class="form-text" id="feedbackHelp">
+                                        Provide context about your decision. This will be sent to the volunteer.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Position Availability Warning -->
+                            {% if opportunity.positions_filled >= opportunity.positions and opportunity.status == 'filled' %}
+                                <div class="alert alert-warning mb-4">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="alert-heading h5">Position Limit Reached</h4>
+                                            <p class="mb-0">
+                                                This opportunity already has all {{ opportunity.positions }} positions filled. 
+                                                Accepting more volunteers will increase the total number of positions.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-flex justify-content-between flex-wrap gap-2">
+                                <a href="{% url 'application_detail' application.id %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Back to Application
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-check me-2"></i> Update Status
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Volunteer Skills & Interests Card -->
+                <div class="volunteer-info-card mt-4 p-4 bg-white rounded shadow-sm" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="h5 mb-3">
+                        <i class="fas fa-user-check text-primary me-2"></i> Volunteer Profile
+                    </h3>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h4 class="h6 mb-3">Skills</h4>
+                            {% if application.volunteer.skills.all %}
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    {% for skill in application.volunteer.skills.all %}
+                                        <span class="badge bg-light text-dark p-2">{{ skill.name }}</span>
+                                    {% endfor %}
+                                </div>
+                                
+                                <h6 class="small fw-medium mb-2">Skills matching opportunity requirements:</h6>
+                                <div class="progress mb-1" style="height: 8px;">
+                                    {% with total_required=application.opportunity.required_skills.count %}
+                                        {% if total_required > 0 %}
+                                            {% with matching_skills=application.volunteer.skills.all|intersection:application.opportunity.required_skills.all|length %}
+                                                {% widthratio matching_skills total_required 100 as match_percentage %}
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ match_percentage }}%" 
+                                                     aria-valuenow="{{ match_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            {% endwith %}
+                                        {% else %}
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" 
+                                                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                                <div class="small text-muted">
+                                    {% with total_required=application.opportunity.required_skills.count %}
+                                        {% if total_required > 0 %}
+                                            {% with matching_skills=application.volunteer.skills.all|intersection:application.opportunity.required_skills.all|length %}
+                                                {{ matching_skills }}/{{ total_required }} required skills
+                                            {% endwith %}
+                                        {% else %}
+                                            No specific skills required for this opportunity
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No skills specified in volunteer's profile.</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h4 class="h6 mb-3">Interests</h4>
+                            {% if application.volunteer.interests.all %}
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    {% for interest in application.volunteer.interests.all %}
+                                        <span class="badge bg-light text-dark p-2">{{ interest.name }}</span>
+                                    {% endfor %}
+                                </div>
+                                
+                                <h6 class="small fw-medium mb-2">Interests matching opportunity focus:</h6>
+                                <div class="progress mb-1" style="height: 8px;">
+                                    {% with total_interests=application.opportunity.interests.count %}
+                                        {% if total_interests > 0 %}
+                                            {% with matching_interests=application.volunteer.interests.all|intersection:application.opportunity.interests.all|length %}
+                                                {% widthratio matching_interests total_interests 100 as match_percentage %}
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ match_percentage }}%" 
+                                                     aria-valuenow="{{ match_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            {% endwith %}
+                                        {% else %}
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" 
+                                                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                                <div class="small text-muted">
+                                    {% with total_interests=application.opportunity.interests.count %}
+                                        {% if total_interests > 0 %}
+                                            {% with matching_interests=application.volunteer.interests.all|intersection:application.opportunity.interests.all|length %}
+                                                {{ matching_interests }}/{{ total_interests }} matching interests
+                                            {% endwith %}
+                                        {% else %}
+                                            No specific interests required for this opportunity
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No interests specified in volunteer's profile.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'volunteer_detail' application.volunteer.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-user me-2"></i> View Full Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .bg-light-info {
+        background-color: rgba(23, 162, 184, 0.1);
+    }
+    
+    .bg-light-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    
+    .bg-light-warning {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+    
+    .form-check-input:checked[value="accepted"] {
+        background-color: var(--success);
+        border-color: var(--success);
+    }
+    
+    .form-check-input:checked[value="declined"] {
+        background-color: var(--danger);
+        border-color: var(--danger);
+    }
+    
+    .form-check-input:checked[value="pending"] {
+        background-color: var(--warning);
+        border-color: var(--warning);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Status description toggling
+        const statusRadios = document.querySelectorAll('input[name="status"]');
+        const acceptedDescription = document.getElementById('acceptedDescription');
+        const declinedDescription = document.getElementById('declinedDescription');
+        const pendingDescription = document.getElementById('pendingDescription');
+        
+        function updateStatusDescription() {
+            const selectedStatus = document.querySelector('input[name="status"]:checked').value;
+            
+            // Hide all descriptions first
+            acceptedDescription.classList.add('d-none');
+            declinedDescription.classList.add('d-none');
+            pendingDescription.classList.add('d-none');
+            
+            // Show the relevant description
+            if (selectedStatus === 'accepted') {
+                acceptedDescription.classList.remove('d-none');
+            } else if (selectedStatus === 'declined') {
+                declinedDescription.classList.remove('d-none');
+            } else if (selectedStatus === 'pending') {
+                pendingDescription.classList.remove('d-none');
+            }
+        }
+        
+        // Initialize with the current selection
+        updateStatusDescription();
+        
+        // Update when selection changes
+        statusRadios.forEach(function(radio) {
+            radio.addEventListener('change', updateStatusDescription);
+        });
+        
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+{% endblock %}
