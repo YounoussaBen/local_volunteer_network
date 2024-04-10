@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Provide Feedback | Local Volunteer Network{% endblock %}
+{% block body_class %}feedback-page{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="d-flex align-items-center mb-2">
+                    <a href="{% url 'application_detail' application.id %}" class="text-white me-3">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="display-5 fw-bold mb-0" data-aos="fade-up">Provide Feedback</h1>
+                </div>
+                <p class="lead mb-0" data-aos="fade-up" data-aos-delay="100">
+                    {% if user.profile.user_type == 'volunteer' %}
+                        Share your experience volunteering with {{ application.opportunity.organization.organization_name }}
+                    {% else %}
+                        Share your feedback about {{ application.volunteer.user_profile.user.get_full_name }}'s volunteer work
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Feedback Form Section -->
+<section class="feedback-form-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left Column - Feedback Form -->
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <h2 class="h3 mb-4">
+                            {% if user.profile.user_type == 'volunteer' %}
+                                Your Volunteer Experience
+                            {% else %}
+                                Volunteer Performance Feedback
+                            {% endif %}
+                        </h2>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="form-group mb-4">
+                                <label for="{{ form.volunteer_feedback.id_for_label|default:form.organization_feedback.id_for_label }}" class="form-label fw-medium mb-2">
+                                    {% if user.profile.user_type == 'volunteer' %}
+                                        Please describe your volunteer experience
+                                    {% else %}
+                                        Please provide feedback about this volunteer
+                                    {% endif %}
+                                </label>
+                                <div class="form-text mb-2">
+                                    {% if user.profile.user_type == 'volunteer' %}
+                                        Share what you enjoyed, challenges you faced, and any suggestions for improvement.
+                                    {% else %}
+                                        Comment on the volunteer's performance, reliability, skills, and any other relevant observations.
+                                    {% endif %}
+                                </div>
+                                {{ form.volunteer_feedback|default:form.organization_feedback|as_crispy_field }}
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="{{ form.volunteer_rating.id_for_label|default:form.organization_rating.id_for_label }}" class="form-label fw-medium mb-3">
+                                    {% if user.profile.user_type == 'volunteer' %}
+                                        Rate your overall experience
+                                    {% else %}
+                                        Rate this volunteer's overall performance
+                                    {% endif %}
+                                </label>
+                                
+                                <div class="star-rating mb-3">
+                                    <div class="rating-container" id="ratingContainer">
+                                        <i class="far fa-star rating-star" data-rating="1"></i>
+                                        <i class="far fa-star rating-star" data-rating="2"></i>
+                                        <i class="far fa-star rating-star" data-rating="3"></i>
+                                        <i class="far fa-star rating-star" data-rating="4"></i>
+                                        <i class="far fa-star rating-star" data-rating="5"></i>
+                                        <div class="rating-text ms-2">Select a rating</div>
+                                    </div>
+                                    <input type="hidden" id="{{ form.volunteer_rating.id_for_label|default:form.organization_rating.id_for_label }}" name="{{ form.volunteer_rating.html_name|default:form.organization_rating.html_name }}" value="{{ form.volunteer_rating.value|default:form.organization_rating.value|default:'0' }}">
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="feedbackCheck" required>
+                                <label class="form-check-label" for="feedbackCheck">
+                                    I certify that this feedback is honest, respectful, and based on my actual experience.
+                                </label>
+                                <div class="invalid-feedback">
+                                    You must agree to submit honest feedback.
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{% url 'application_detail' application.id %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Back
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i> Submit Feedback
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Opportunity Details -->
+            <div class="col-lg-4" data-aos="fade-left">
+                <!-- Opportunity Summary Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="h5 card-title mb-3">
+                            <i class="fas fa-clipboard-list me-2 text-primary"></i> Opportunity Details
+                        </h3>
+                        
+                        <div class="opportunity-info mb-3">
+                            <h4 class="h5 mb-2">{{ application.opportunity.title }}</h4>
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-map-marker-alt me-1"></i> {{ application.opportunity.location }}
+                            </p>
+                            <p class="mb-0">{{ application.opportunity.description|truncatechars:150 }}</p>
+                        </div>
+                        
+                        <hr class="my-3">
+                        
+                        <div class="detail-item d-flex justify-content-between mb-2">
+                            <span class="text-muted">Date:</span>
+                            <span class="fw-medium">
+                                {% if application.opportunity.end_date %}
+                                    {{ application.opportunity.start_date|date:"M d" }} - {{ application.opportunity.end_date|date:"M d, Y" }}
+                                {% else %}
+                                    {{ application.opportunity.start_date|date:"M d, Y" }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">Status:</span>
+                            <span class="badge status-badge-{{ application.opportunity.status }}">
+                                {{ application.opportunity.status|title }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Feedback Tips Card -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h5 card-title mb-3">
+                            <i class="fas fa-lightbulb me-2 text-primary"></i> Feedback Tips
+                        </h3>
+                        
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Be specific</strong> about your experience or observations.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Be honest</strong> but constructive in your comments.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Include both positives</strong> and areas for improvement.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Provide examples</strong> to support your feedback points.
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Be respectful</strong> and professional in your tone.
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .star-rating {
+        margin-bottom: 20px;
+    }
+    
+    .rating-container {
+        display: flex;
+        align-items: center;
+    }
+    
+    .rating-star {
+        font-size: 28px;
+        color: #ffc107;
+        cursor: pointer;
+        margin-right: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .rating-star:hover {
+        transform: scale(1.2);
+    }
+    
+    .rating-text {
+        font-size: 14px;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Star rating functionality
+        const stars = document.querySelectorAll('.rating-star');
+        const ratingInput = document.querySelector('input[name="{{ form.volunteer_rating.html_name|default:form.organization_rating.html_name }}"]');
+        const ratingText = document.querySelector('.rating-text');
+        const ratingTexts = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+        
+        // Set initial rating if available
+        const initialRating = parseInt(ratingInput.value) || 0;
+        if (initialRating > 0) {
+            updateStars(initialRating);
+            ratingText.textContent = ratingTexts[initialRating - 1];
+        }
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                ratingInput.value = rating;
+                updateStars(rating);
+                ratingText.textContent = ratingTexts[rating - 1];
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                highlightStars(rating);
+            });
+            
+            star.addEventListener('mouseout', function() {
+                const currentRating = parseInt(ratingInput.value) || 0;
+                updateStars(currentRating);
+            });
+        });
+        
+        function updateStars(rating) {
+            stars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+        
+        function highlightStars(rating) {
+            stars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+            
+            if (rating > 0) {
+                ratingText.textContent = ratingTexts[rating - 1];
+            } else {
+                ratingText.textContent = 'Select a rating';
+            }
+        }
+        
+        // Form validation
+        const form = document.querySelector('form');
+        const feedbackCheck = document.getElementById('feedbackCheck');
+        
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Check if rating is selected
+            if (parseInt(ratingInput.value) === 0) {
+                isValid = false;
+                ratingText.textContent = 'Please select a rating';
+                ratingText.style.color = '#dc3545';
+            }
+            
+            // Check if terms checkbox is checked
+            if (!feedbackCheck.checked) {
+                isValid = false;
+                feedbackCheck.classList.add('is-invalid');
+            } else {
+                feedbackCheck.classList.remove('is-invalid');
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}
