@@ -14,9 +14,6 @@
                 <h1 class="display-5 fw-bold mb-3">Volunteer Opportunities</h1>
                 <p class="lead mb-0">Discover meaningful opportunities to make a difference in Accra.</p>
             </div>
-            <div class="col-lg-6 d-none d-lg-block" data-aos="fade-left">
-                <img src="{% static 'images/opportunity-header.svg' %}" alt="Volunteer Opportunities" class="img-fluid">
-            </div>
         </div>
     </div>
 </section>
@@ -287,7 +284,6 @@
             </div>
         {% else %}
             <div class="text-center py-5" data-aos="fade-up">
-                <img src="{% static 'images/no-results.svg' %}" alt="No results found" class="img-fluid mb-4" style="max-width: 200px;">
                 <h3 class="h4 mb-3">No opportunities found</h3>
                 <p class="text-muted mb-4">We couldn't find any opportunities matching your criteria. Try adjusting your filters or search terms.</p>
                 <a href="{% url 'opportunity_list' %}" class="btn btn-primary">

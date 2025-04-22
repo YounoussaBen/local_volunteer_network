@@ -14,9 +14,6 @@
                 <h1 class="display-5 fw-bold mb-3">Organizations</h1>
                 <p class="lead mb-0">Discover organizations making a difference in Accra</p>
             </div>
-            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
-                <img src="{% static 'images/organizations-header.svg' %}" alt="Organizations" class="img-fluid" style="max-height: 250px;">
-            </div>
         </div>
     </div>
     <div class="wave-bottom">
@@ -295,7 +292,6 @@
             </div>
         {% else %}
             <div class="text-center py-5" data-aos="fade-up">
-                <img src="{% static 'images/no-results.svg' %}" alt="No results found" class="img-fluid mb-4" style="max-width: 200px;">
                 <h3 class="h4 mb-3">No organizations found</h3>
                 <p class="text-muted mb-4">We couldn't find any organizations matching your criteria. Try adjusting your filters or search terms.</p>
                 <a href="{% url 'organization_list' %}" class="btn btn-primary">

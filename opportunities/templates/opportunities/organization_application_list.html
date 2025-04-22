@@ -14,9 +14,6 @@
                 <h1 class="display-5 fw-bold mb-3">Manage Applications</h1>
                 <p class="lead mb-0">Review and manage volunteer applications for your opportunities</p>
             </div>
-            <div class="col-lg-6 d-none d-lg-block text-center" data-aos="fade-left">
-                <img src="{% static 'images/manage-applications.svg' %}" alt="Manage Applications" class="img-fluid" style="max-height: 250px;">
-            </div>
         </div>
     </div>
 </section>
@@ -128,7 +125,6 @@
                         </div>
                     {% else %}
                         <div class="text-center py-5">
-                            <img src="{% static 'images/no-applications.svg' %}" alt="No applications found" class="img-fluid mb-4" style="max-width: 200px;">
                             <h3 class="h4 mb-3">No applications yet</h3>
                             <p class="text-muted mb-4">You haven't received any applications for your opportunities yet.</p>
                             <a href="{% url 'create_opportunity' %}" class="btn btn-primary">
