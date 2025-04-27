@@ -58,61 +58,58 @@
         
         <div class="applications-container" data-aos="fade-up" data-aos-delay="100">
             {% if applications %}
-                <div class="card border-0 shadow-sm">
-                    <div class="list-group list-group-flush application-list">
-                        {% for application in applications %}
-                            <div class="list-group-item p-0 application-item" data-status="{{ application.status }}">
-                                <div class="application-card p-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-lg-6 mb-3 mb-lg-0">
-                                            <h3 class="h5 mb-1">
-                                                <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="text-decoration-none">
-                                                    {{ application.opportunity.title }}
-                                                </a>
-                                            </h3>
-                                            <div class="d-flex flex-wrap gap-2 align-items-center">
-                                                <a href="{% url 'organization_detail' application.opportunity.organization.id %}" class="text-decoration-none d-flex align-items-center">
-                                                    {% if application.opportunity.organization.user_profile.profile_picture %}
-                                                        <img src="{{ application.opportunity.organization.user_profile.profile_picture.url }}" class="rounded-circle me-2" width="20" height="20" alt="{{ application.opportunity.organization.organization_name }}">
-                                                    {% else %}
-                                                        <div class="avatar-placeholder me-2" style="width: 20px; height: 20px; font-size: 10px;">
-                                                            {{ application.opportunity.organization.organization_name|first|upper }}
-                                                        </div>
-                                                    {% endif %}
-                                                    <span class="small text-muted">{{ application.opportunity.organization.organization_name }}</span>
-                                                </a>
-                                                <span class="small text-muted">
-                                                    <i class="fas fa-map-marker-alt"></i> {{ application.opportunity.location }}
-                                                </span>
-                                            </div>
+                <div class="row g-4">
+                    {% for application in applications %}
+                        <div class="col-lg-4 col-md-6 application-item" data-status="{{ application.status }}">
+                            <div class="card h-100 border-0 shadow-sm application-card">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span class="badge status-badge-{{ application.status }}">{{ application.status|title }}</span>
+                                        <small class="text-muted">Applied on {{ application.created_at|date:"M d, Y" }}</small>
+                                    </div>
+
+                                    <h5 class="card-title mb-2">
+                                        <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="text-decoration-none">
+                                            {{ application.opportunity.title }}
+                                        </a>
+                                    </h5>
+                                    
+                                    <div class="d-flex align-items-center mb-3">
+                                        <a href="{% url 'organization_detail' application.opportunity.organization.id %}" class="text-decoration-none d-flex align-items-center">
+                                            {% if application.opportunity.organization.user_profile.profile_picture %}
+                                                <img src="{{ application.opportunity.organization.user_profile.profile_picture.url }}" class="rounded-circle me-2" width="20" height="20" alt="{{ application.opportunity.organization.organization_name }}">
+                                            {% else %}
+                                                <div class="avatar-placeholder me-2" style="width: 20px; height: 20px; font-size: 10px;">
+                                                    {{ application.opportunity.organization.organization_name|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                            <span class="small text-muted">{{ application.opportunity.organization.organization_name }}</span>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center text-muted small mb-2">
+                                            <i class="fas fa-map-marker-alt me-2"></i> 
+                                            {{ application.opportunity.location }}
                                         </div>
-                                        <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                            <div class="small text-muted mb-1">Date</div>
-                                            <div>
-                                                {% if application.opportunity.end_date %}
-                                                    {{ application.opportunity.start_date|date:"M d" }} - {{ application.opportunity.end_date|date:"M d, Y" }}
-                                                {% else %}
-                                                    {{ application.opportunity.start_date|date:"M d, Y" }}
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                            <div class="small text-muted mb-1">Applied On</div>
-                                            <div>{{ application.created_at|date:"M d, Y" }}</div>
-                                        </div>
-                                        <div class="col-lg-2 col-md-4 text-md-center">
-                                            <span class="badge status-badge-{{ application.status }} mb-2 d-block">
-                                                {{ application.status|title }}
-                                            </span>
-                                            <a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-eye me-1"></i> View
-                                            </a>
+                                        <div class="d-flex align-items-center text-muted small">
+                                            <i class="fas fa-calendar-alt me-2"></i>
+                                            {% if application.opportunity.end_date %}
+                                                {{ application.opportunity.start_date|date:"M d" }} - {{ application.opportunity.end_date|date:"M d, Y" }}
+                                            {% else %}
+                                                {{ application.opportunity.start_date|date:"M d, Y" }}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-footer bg-white p-3">
+                                    <a href="{% url 'application_detail' application.id %}" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-eye me-2"></i> View Application
+                                    </a>
+                                </div>
                             </div>
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% endfor %}
                 </div>
             {% else %}
                 <div class="text-center py-5">
@@ -161,7 +158,8 @@
     }
     
     .application-card:hover {
-        background-color: rgba(0, 0, 0, 0.01);
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     }
     
     .filter-buttons {
@@ -171,6 +169,26 @@
     
     .filter-buttons .btn {
         border-radius: 0;
+    }
+    
+    .status-badge-pending {
+        background-color: rgba(23, 162, 184, 0.1);
+        color: #17a2b8;
+    }
+    
+    .status-badge-accepted {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge-declined {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    .status-badge-withdrawn {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
     }
     
     .hidden-status {

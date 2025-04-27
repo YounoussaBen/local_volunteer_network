@@ -119,3 +119,11 @@ def days_status(days):
         return 'urgent'
     else:
         return 'upcoming'
+    
+
+@register.filter
+def intersection(queryset1, queryset2):
+    """
+    Returns the intersection of two querysets
+    """
+    return [item for item in queryset1 if item in queryset2]

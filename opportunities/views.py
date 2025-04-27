@@ -161,11 +161,7 @@ def apply_opportunity(request, pk):
         messages.error(request, 'Only volunteers can apply for opportunities.')
         return redirect('opportunity_detail', pk=pk)
     
-    try:
-        volunteer_profile = user_profile.volunteer_profile
-    except:
-        messages.error(request, 'Please complete your volunteer profile first.')
-        return redirect('edit_volunteer_profile')
+    volunteer_profile = user_profile.volunteer_profile
     
     # Check if already applied
     existing_application = Application.objects.filter(

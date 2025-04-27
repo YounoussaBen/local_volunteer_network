@@ -7,34 +7,46 @@
 
 {% block content %}
 <!-- Page Header -->
-<section class="page-header bg-gradient-primary text-white py-5">
+<section class="page-header bg-gradient-primary text-white py-5 position-relative">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6" data-aos="fade-right">
-                <h1 class="display-5 fw-bold mb-3">Manage Applications</h1>
+            <div class="col-lg-8 col-md-10">
+                <h1 class="display-5 fw-bold mb-2">Manage Applications</h1>
                 <p class="lead mb-0">Review and manage volunteer applications for your opportunities</p>
             </div>
         </div>
+    </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
     </div>
 </section>
 
 <!-- Applications Section -->
 <section class="applications-section py-5">
     <div class="container">
-        <!-- Filters and Search -->
-        <div class="row mb-4">
+        <div class="row g-4">
+            <!-- Main Column -->
             <div class="col-lg-8" data-aos="fade-up">
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-body p-3">
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <div class="d-flex">
-                                    <select class="form-select me-2" id="opportunityFilter">
+                <!-- Applications Card -->
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Filters and Search -->
+                        <div class="filters-section mb-4">
+                            <h3 class="h5 mb-3">Filter Applications</h3>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="opportunityFilter" class="form-label small text-muted">Opportunity</label>
+                                    <select class="form-select" id="opportunityFilter">
                                         <option value="all">All Opportunities</option>
                                         {% for opportunity in opportunities %}
                                             <option value="{{ opportunity.id }}">{{ opportunity.title }}</option>
                                         {% endfor %}
                                     </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="statusFilter" class="form-label small text-muted">Status</label>
                                     <select class="form-select" id="statusFilter">
                                         <option value="all">All Statuses</option>
                                         <option value="pending">Pending</option>
@@ -42,202 +54,208 @@
                                         <option value="declined">Declined</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search applicants..." id="applicantSearch">
-                                    <button class="btn btn-outline-primary" type="button" id="searchBtn">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                                <div class="col-12">
+                                    <label for="applicantSearch" class="form-label small text-muted">Search by Name</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search applicants..." id="applicantSearch">
+                                        <button class="btn btn-outline-primary" type="button" id="searchBtn">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Applications List -->
-                <div class="applications-container">
-                    {% if applications %}
-                        <div class="applications-count mb-3">
-                            <span class="text-muted">Showing <span id="applicationsShown">{{ applications.count }}</span> applications</span>
-                        </div>
                         
-                        <div class="card border-0 shadow-sm">
-                            <div class="list-group list-group-flush application-list">
-                                {% for application in applications %}
-                                    <div class="list-group-item p-0 application-item" 
-                                         data-status="{{ application.status }}" 
-                                         data-opportunity="{{ application.opportunity.id }}"
-                                         data-name="{{ application.volunteer.user_profile.user.get_full_name }}">
-                                        <div class="application-card p-4">
-                                            <div class="row align-items-center">
-                                                <div class="col-lg-5 mb-3 mb-lg-0">
-                                                    <div class="d-flex align-items-center">
-                                                        {% if application.volunteer.user_profile.profile_picture %}
-                                                            <img src="{{ application.volunteer.user_profile.profile_picture.url }}" alt="{{ application.volunteer.user_profile.user.get_full_name }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                                                        {% else %}
-                                                            <div class="avatar-placeholder me-3" style="width: 50px; height: 50px; font-size: 1.25rem;">
-                                                                {{ application.volunteer.user_profile.user.first_name|first|upper }}{{ application.volunteer.user_profile.user.last_name|first|upper }}
+                        <hr class="mb-4">
+                        
+                        <!-- Applications List -->
+                        <div class="applications-container">
+                            {% if applications %}
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h3 class="h5 mb-0">Applications</h3>
+                                    <div class="applications-count">
+                                        <span class="text-muted">Showing <span id="applicationsShown">{{ applications.count }}</span> applications</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="application-list">
+                                    {% for application in applications %}
+                                        <div class="application-item card mb-3 border-0" 
+                                            data-status="{{ application.status }}" 
+                                            data-opportunity="{{ application.opportunity.id }}"
+                                            data-name="{{ application.volunteer.user_profile.user.get_full_name }}">
+                                            <div class="card-body p-3 bg-light rounded">
+                                                <div class="row align-items-center">
+                                                    <div class="col-lg-5 mb-3 mb-lg-0">
+                                                        <div class="d-flex align-items-center">
+                                                            {% if application.volunteer.user_profile.profile_picture %}
+                                                                <img src="{{ application.volunteer.user_profile.profile_picture.url }}" alt="{{ application.volunteer.user_profile.user.get_full_name }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                            {% else %}
+                                                                <div class="avatar-placeholder me-3" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                                                                    {{ application.volunteer.user_profile.user.first_name|first|upper }}{{ application.volunteer.user_profile.user.last_name|first|upper }}
+                                                                </div>
+                                                            {% endif %}
+                                                            <div>
+                                                                <h3 class="h5 mb-1">
+                                                                    <a href="{% url 'volunteer_detail' application.volunteer.id %}" class="text-decoration-none">
+                                                                        {{ application.volunteer.user_profile.user.get_full_name }}
+                                                                    </a>
+                                                                </h3>
+                                                                <p class="mb-0 small text-muted">
+                                                                    <i class="fas fa-envelope me-1"></i> {{ application.volunteer.user_profile.user.email }}
+                                                                </p>
                                                             </div>
-                                                        {% endif %}
-                                                        <div>
-                                                            <h3 class="h5 mb-1">
-                                                                <a href="{% url 'volunteer_detail' application.volunteer.id %}" class="text-decoration-none">
-                                                                    {{ application.volunteer.user_profile.user.get_full_name }}
-                                                                </a>
-                                                            </h3>
-                                                            <p class="mb-0 small text-muted">
-                                                                <i class="fas fa-envelope me-1"></i> {{ application.volunteer.user_profile.user.email }}
-                                                            </p>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                                                    <div class="small text-muted mb-1">Opportunity</div>
-                                                    <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="text-decoration-none">
-                                                        {{ application.opportunity.title|truncatechars:30 }}
-                                                    </a>
-                                                </div>
-                                                <div class="col-lg-2 col-md-3 mb-3 mb-lg-0">
-                                                    <div class="small text-muted mb-1">Applied On</div>
-                                                    {{ application.created_at|date:"M d, Y" }}
-                                                </div>
-                                                <div class="col-lg-2 col-md-3 text-md-end">
-                                                    <span class="badge status-badge-{{ application.status }} mb-2 d-block">
-                                                        {{ application.status|title }}
-                                                    </span>
-                                                    <div class="btn-group btn-group-sm">
-                                                        <a href="{% url 'application_detail' application.id %}" class="btn btn-outline-primary">
-                                                            <i class="fas fa-eye"></i>
+                                                    <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+                                                        <div class="small text-muted mb-1">Opportunity</div>
+                                                        <a href="{% url 'opportunity_detail' application.opportunity.id %}" class="text-decoration-none fw-medium">
+                                                            {{ application.opportunity.title|truncatechars:30 }}
                                                         </a>
-                                                        {% if application.status == 'pending' %}
-                                                            <a href="{% url 'update_application' application.id %}" class="btn btn-outline-primary">
-                                                                <i class="fas fa-edit"></i>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-3 mb-3 mb-lg-0">
+                                                        <div class="small text-muted mb-1">Applied On</div>
+                                                        <span class="fw-medium">{{ application.created_at|date:"M d, Y" }}</span>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-3 text-md-end">
+                                                        <span class="badge status-badge-{{ application.status }} mb-2 d-block">
+                                                            {{ application.status|title }}
+                                                        </span>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <a href="{% url 'application_detail' application.id %}" class="btn btn-outline-primary">
+                                                                <i class="fas fa-eye"></i>
                                                             </a>
-                                                        {% endif %}
+                                                            {% if application.status == 'pending' %}
+                                                                <a href="{% url 'update_application' application.id %}" class="btn btn-outline-primary">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </a>
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <h3 class="h4 mb-3">No applications yet</h3>
+                                    <p class="text-muted mb-4">You haven't received any applications for your opportunities yet.</p>
+                                    <a href="{% url 'create_opportunity' %}" class="btn btn-primary">
+                                        <i class="fas fa-plus-circle me-2"></i> Create New Opportunity
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
-                    {% else %}
-                        <div class="text-center py-5">
-                            <h3 class="h4 mb-3">No applications yet</h3>
-                            <p class="text-muted mb-4">You haven't received any applications for your opportunities yet.</p>
-                            <a href="{% url 'create_opportunity' %}" class="btn btn-primary">
-                                <i class="fas fa-plus-circle me-2"></i> Create New Opportunity
-                            </a>
-                        </div>
-                    {% endif %}
+                    </div>
                 </div>
             </div>
             
             <!-- Sidebar -->
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                <!-- Stats Card -->
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-body p-4">
-                        <h3 class="h5 card-title mb-4">
-                            <i class="fas fa-chart-pie me-2 text-primary"></i> Application Stats
-                        </h3>
-                        
-                        <div class="row g-4">
-                            <div class="col-6">
-                                <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
-                                    <div class="h1 mb-2 text-primary">{{ applications.count }}</div>
-                                    <div class="small text-muted">Total Applications</div>
+                <div class="sticky-top" style="top: 20px;">
+                    <!-- Stats Card -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-3 p-md-4">
+                            <h3 class="h5 card-title mb-3">
+                                <i class="fas fa-chart-pie me-2 text-primary"></i> Application Stats
+                            </h3>
+                            
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
+                                        <div class="h1 mb-1 text-primary">{{ applications.count }}</div>
+                                        <div class="small text-muted">Total</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
-                                    <div class="h1 mb-2 text-info">{{ pending_count }}</div>
-                                    <div class="small text-muted">Pending</div>
+                                <div class="col-6">
+                                    <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
+                                        <div class="h1 mb-1 text-info">{{ pending_count }}</div>
+                                        <div class="small text-muted">Pending</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
-                                    <div class="h1 mb-2 text-success">{{ accepted_count }}</div>
-                                    <div class="small text-muted">Accepted</div>
+                                <div class="col-6">
+                                    <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
+                                        <div class="h1 mb-1 text-success">{{ accepted_count }}</div>
+                                        <div class="small text-muted">Accepted</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
-                                    <div class="h1 mb-2 text-danger">{{ declined_count }}</div>
-                                    <div class="small text-muted">Declined</div>
+                                <div class="col-6">
+                                    <div class="stat-card h-100 p-3 bg-light-gray rounded text-center">
+                                        <div class="h1 mb-1 text-danger">{{ declined_count }}</div>
+                                        <div class="small text-muted">Declined</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Quick Actions -->
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-body p-4">
-                        <h3 class="h5 card-title mb-3">
-                            <i class="fas fa-bolt me-2 text-primary"></i> Quick Actions
-                        </h3>
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'create_opportunity' %}" class="btn btn-primary">
-                                <i class="fas fa-plus-circle me-2"></i> Create New Opportunity
-                            </a>
-                            <a href="{% url 'opportunity_list' %}?organization={{ organization_profile.id }}" class="btn btn-outline-primary">
-                                <i class="fas fa-list me-2"></i> View My Opportunities
-                            </a>
+                    
+                    <!-- Quick Actions -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-3 p-md-4">
+                            <h3 class="h5 card-title mb-3">
+                                <i class="fas fa-bolt me-2 text-primary"></i> Quick Actions
+                            </h3>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'create_opportunity' %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus-circle me-2"></i> Create New Opportunity
+                                </a>
+                                <a href="{% url 'opportunity_list' %}?organization={{ organization_profile.id }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-list me-2"></i> View My Opportunities
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Tips Card -->
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-4">
-                        <h3 class="h5 card-title mb-3">
-                            <i class="fas fa-lightbulb me-2 text-primary"></i> Tips for Reviewing
-                        </h3>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item px-0">
-                                <div class="d-flex">
-                                    <div class="me-3 text-primary">
-                                        <i class="fas fa-check-circle"></i>
+                    
+                    <!-- Tips Card -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-3 p-md-4">
+                            <h3 class="h5 card-title mb-3">
+                                <i class="fas fa-lightbulb me-2 text-primary"></i> Tips for Reviewing
+                            </h3>
+                            <ul class="list-group list-group-flush mb-0">
+                                <li class="list-group-item px-0 py-2">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Review skills and interests</strong> to ensure they match your requirements.
+                                        </div>
                                     </div>
-                                    <div>
-                                        <strong>Review skills and interests</strong> to ensure they match your requirements.
+                                </li>
+                                <li class="list-group-item px-0 py-2">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Check volunteer profiles</strong> for previous experience and ratings.
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item px-0">
-                                <div class="d-flex">
-                                    <div class="me-3 text-primary">
-                                        <i class="fas fa-check-circle"></i>
+                                </li>
+                                <li class="list-group-item px-0 py-2">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Respond promptly</strong> to keep volunteers engaged and interested.
+                                        </div>
                                     </div>
-                                    <div>
-                                        <strong>Check volunteer profiles</strong> for previous experience and ratings.
+                                </li>
+                                <li class="list-group-item px-0 py-2 border-bottom-0">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Provide feedback</strong> when declining applications to help volunteers improve.
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item px-0">
-                                <div class="d-flex">
-                                    <div class="me-3 text-primary">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <div>
-                                        <strong>Respond promptly</strong> to keep volunteers engaged and interested.
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item px-0">
-                                <div class="d-flex">
-                                    <div class="me-3 text-primary">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <div>
-                                        <strong>Provide feedback</strong> when declining applications to help volunteers improve.
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -249,28 +267,41 @@
 {% block extra_css %}
 <style>
     .page-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
         background-position: center;
         background-size: cover;
     }
     
-    .application-card {
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .application-item {
         transition: all 0.3s ease;
         border-left: 4px solid transparent;
     }
     
-    .application-item[data-status="pending"] .application-card {
+    .application-item[data-status="pending"] {
         border-left-color: #17a2b8;
     }
     
-    .application-item[data-status="accepted"] .application-card {
+    .application-item[data-status="accepted"] {
         border-left-color: #28a745;
     }
     
-    .application-item[data-status="declined"] .application-card {
+    .application-item[data-status="declined"] {
         border-left-color: #dc3545;
     }
     
-    .application-item[data-status="withdrawn"] .application-card {
+    .application-item[data-status="withdrawn"] {
         border-left-color: #6c757d;
     }
     
@@ -284,6 +315,46 @@
     
     .applications-count {
         font-size: 0.9rem;
+    }
+    
+    .avatar-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 50%;
+    }
+    
+    .status-badge-pending {
+        background-color: rgba(23, 162, 184, 0.1);
+        color: #17a2b8;
+    }
+    
+    .status-badge-accepted {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge-declined {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    .status-badge-withdrawn {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+    
+    .sticky-top {
+        position: sticky;
+        z-index: 1020;
+    }
+    
+    @media (max-width: 991.98px) {
+        .sticky-top {
+            position: static;
+        }
     }
 </style>
 {% endblock %}

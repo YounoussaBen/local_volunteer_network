@@ -8,7 +8,7 @@
 
 {% block content %}
 <!-- Page Header -->
-<section class="page-header bg-gradient-primary text-white py-5">
+<section class="page-header bg-gradient-primary text-white py-5 position-relative">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 col-md-10 mx-auto">
@@ -32,9 +32,10 @@
 <!-- Update Form Section -->
 <section class="form-section py-5">
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row g-4 justify-content-center">
+            <!-- Main Form Card -->
             <div class="col-lg-8 col-md-10" data-aos="fade-up">
-                <div class="card border-0 shadow-sm">
+                <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-4 p-lg-5">
                         <div class="application-summary mb-4">
                             <div class="row align-items-center">
@@ -184,99 +185,103 @@
                         </form>
                     </div>
                 </div>
-                
-                <!-- Volunteer Skills & Interests Card -->
-                <div class="volunteer-info-card mt-4 p-4 bg-white rounded shadow-sm" data-aos="fade-up" data-aos-delay="100">
-                    <h3 class="h5 mb-3">
-                        <i class="fas fa-user-check text-primary me-2"></i> Volunteer Profile
-                    </h3>
-                    
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <h4 class="h6 mb-3">Skills</h4>
-                            {% if application.volunteer.skills.all %}
-                                <div class="d-flex flex-wrap gap-2 mb-3">
-                                    {% for skill in application.volunteer.skills.all %}
-                                        <span class="badge bg-light text-dark p-2">{{ skill.name }}</span>
-                                    {% endfor %}
-                                </div>
-                                
-                                <h6 class="small fw-medium mb-2">Skills matching opportunity requirements:</h6>
-                                <div class="progress mb-1" style="height: 8px;">
-                                    {% with total_required=application.opportunity.required_skills.count %}
-                                        {% if total_required > 0 %}
-                                            {% with matching_skills=application.volunteer.skills.all|intersection:application.opportunity.required_skills.all|length %}
-                                                {% widthratio matching_skills total_required 100 as match_percentage %}
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ match_percentage }}%" 
-                                                     aria-valuenow="{{ match_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                            {% endwith %}
-                                        {% else %}
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" 
-                                                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                                <div class="small text-muted">
-                                    {% with total_required=application.opportunity.required_skills.count %}
-                                        {% if total_required > 0 %}
-                                            {% with matching_skills=application.volunteer.skills.all|intersection:application.opportunity.required_skills.all|length %}
-                                                {{ matching_skills }}/{{ total_required }} required skills
-                                            {% endwith %}
-                                        {% else %}
-                                            No specific skills required for this opportunity
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                            {% else %}
-                                <p class="text-muted mb-0">No skills specified in volunteer's profile.</p>
-                            {% endif %}
+            </div>
+            
+            <!-- Volunteer Skills & Interests Card -->
+            <div class="col-lg-4 col-md-10" data-aos="fade-up" data-aos-delay="100">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h3 class="h5 mb-3">
+                            <i class="fas fa-user-check text-primary me-2"></i> Volunteer Profile
+                        </h3>
+                        
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <h4 class="h6 mb-3">Skills</h4>
+                                {% if application.volunteer.skills.all %}
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        {% for skill in application.volunteer.skills.all %}
+                                            <span class="badge bg-light text-dark p-2">{{ skill.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <h6 class="small fw-medium mb-2">Skills matching opportunity requirements:</h6>
+                                    <div class="progress mb-1" style="height: 8px;">
+                                        {% with total_required=application.opportunity.required_skills.count %}
+                                            {% if total_required > 0 %}
+                                                {% with matching_skills=application.volunteer.skills.all|intersection:application.opportunity.required_skills.all|length %}
+                                                    {% widthratio matching_skills total_required 100 as match_percentage %}
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ match_percentage }}%" 
+                                                         aria-valuenow="{{ match_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                {% endwith %}
+                                            {% else %}
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%" 
+                                                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                    <div class="small text-muted">
+                                        {% with total_required=application.opportunity.required_skills.count %}
+                                            {% if total_required > 0 %}
+                                                {% with matching_skills=application.volunteer.skills.all|intersection:application.opportunity.required_skills.all|length %}
+                                                    {{ matching_skills }}/{{ total_required }} required skills
+                                                {% endwith %}
+                                            {% else %}
+                                                No specific skills required for this opportunity
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0">No skills specified in volunteer's profile.</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <h4 class="h6 mb-3">Interests</h4>
+                                {% if application.volunteer.interests.all %}
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        {% for interest in application.volunteer.interests.all %}
+                                            <span class="badge bg-light text-dark p-2">{{ interest.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <h6 class="small fw-medium mb-2">Interests matching opportunity focus:</h6>
+                                    <div class="progress mb-1" style="height: 8px;">
+                                        {% with total_interests=application.opportunity.interests.count %}
+                                            {% if total_interests > 0 %}
+                                                {% with matching_interests=application.volunteer.interests.all|intersection:application.opportunity.interests.all|length %}
+                                                    {% widthratio matching_interests total_interests 100 as match_percentage %}
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ match_percentage }}%" 
+                                                         aria-valuenow="{{ match_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                {% endwith %}
+                                            {% else %}
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%" 
+                                                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                    <div class="small text-muted">
+                                        {% with total_interests=application.opportunity.interests.count %}
+                                            {% if total_interests > 0 %}
+                                                {% with matching_interests=application.volunteer.interests.all|intersection:application.opportunity.interests.all|length %}
+                                                    {{ matching_interests }}/{{ total_interests }} matching interests
+                                                {% endwith %}
+                                            {% else %}
+                                                No specific interests required for this opportunity
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0">No interests specified in volunteer's profile.</p>
+                                {% endif %}
+                            </div>
                         </div>
                         
-                        <div class="col-md-6">
-                            <h4 class="h6 mb-3">Interests</h4>
-                            {% if application.volunteer.interests.all %}
-                                <div class="d-flex flex-wrap gap-2 mb-3">
-                                    {% for interest in application.volunteer.interests.all %}
-                                        <span class="badge bg-light text-dark p-2">{{ interest.name }}</span>
-                                    {% endfor %}
-                                </div>
-                                
-                                <h6 class="small fw-medium mb-2">Interests matching opportunity focus:</h6>
-                                <div class="progress mb-1" style="height: 8px;">
-                                    {% with total_interests=application.opportunity.interests.count %}
-                                        {% if total_interests > 0 %}
-                                            {% with matching_interests=application.volunteer.interests.all|intersection:application.opportunity.interests.all|length %}
-                                                {% widthratio matching_interests total_interests 100 as match_percentage %}
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ match_percentage }}%" 
-                                                     aria-valuenow="{{ match_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                            {% endwith %}
-                                        {% else %}
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" 
-                                                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                                <div class="small text-muted">
-                                    {% with total_interests=application.opportunity.interests.count %}
-                                        {% if total_interests > 0 %}
-                                            {% with matching_interests=application.volunteer.interests.all|intersection:application.opportunity.interests.all|length %}
-                                                {{ matching_interests }}/{{ total_interests }} matching interests
-                                            {% endwith %}
-                                        {% else %}
-                                            No specific interests required for this opportunity
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                            {% else %}
-                                <p class="text-muted mb-0">No interests specified in volunteer's profile.</p>
-                            {% endif %}
+                        <div class="text-center mt-4">
+                            <a href="{% url 'volunteer_detail' application.volunteer.id %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-user me-2"></i> View Full Profile
+                            </a>
                         </div>
-                    </div>
-                    
-                    <div class="text-center mt-3">
-                        <a href="{% url 'volunteer_detail' application.volunteer.id %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-user me-2"></i> View Full Profile
-                        </a>
                     </div>
                 </div>
             </div>
@@ -328,6 +333,21 @@
     .form-check-input:checked[value="pending"] {
         background-color: var(--warning);
         border-color: var(--warning);
+    }
+    
+    .status-badge-pending {
+        background-color: rgba(23, 162, 184, 0.1);
+        color: #17a2b8;
+    }
+    
+    .status-badge-accepted {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge-declined {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
     }
 </style>
 {% endblock %}

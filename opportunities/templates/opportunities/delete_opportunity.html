@@ -7,7 +7,7 @@
 
 {% block content %}
 <!-- Page Header -->
-<section class="page-header bg-gradient-primary text-white py-5">
+<section class="page-header bg-gradient-primary text-white py-5 position-relative">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 col-md-10 mx-auto text-center">
@@ -21,14 +21,19 @@
             </div>
         </div>
     </div>
+    <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
 </section>
 
 <!-- Delete Confirmation Section -->
 <section class="delete-confirmation-section py-5">
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row g-4 justify-content-center">
             <div class="col-lg-8 col-md-10" data-aos="fade-up">
-                <div class="card border-0 shadow-sm">
+                <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-4 p-lg-5">
                         <div class="text-center mb-4">
                             <div class="delete-icon mb-3">
@@ -91,6 +96,38 @@
                             </div>
                         {% endif %}
                         
+                        <!-- Alternatives Card -->
+                        <div class="alternatives-card mb-4 p-3 bg-light rounded">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-info-circle text-primary me-2"></i> Alternatives to Deletion
+                            </h3>
+                            <p class="mb-3">Instead of deleting this opportunity, you might consider these alternatives:</p>
+                            <div class="row">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-ban"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Mark as cancelled</strong>
+                                            <div class="small text-muted">This will keep the record but hide it from search results.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Update the opportunity</strong>
+                                            <div class="small text-muted">Edit details if the opportunity has changed but is still valid.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <form method="post" class="confirmation-form">
                             {% csrf_token %}
                             
@@ -113,38 +150,6 @@
                         </form>
                     </div>
                 </div>
-                
-                <!-- Alternatives Card -->
-                <div class="alternatives-card mt-4 p-4 bg-light rounded shadow-sm" data-aos="fade-up" data-aos-delay="100">
-                    <h3 class="h5 mb-3">
-                        <i class="fas fa-info-circle text-primary me-2"></i> Alternatives to Deletion
-                    </h3>
-                    <p class="mb-3">Instead of deleting this opportunity, you might consider these alternatives:</p>
-                    <div class="row">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <div class="d-flex">
-                                <div class="me-3 text-primary">
-                                    <i class="fas fa-ban"></i>
-                                </div>
-                                <div>
-                                    <strong>Mark as cancelled</strong>
-                                    <div class="small text-muted">This will keep the record but hide it from search results.</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex">
-                                <div class="me-3 text-primary">
-                                    <i class="fas fa-edit"></i>
-                                </div>
-                                <div>
-                                    <strong>Update the opportunity</strong>
-                                    <div class="small text-muted">Edit details if the opportunity has changed but is still valid.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -154,8 +159,21 @@
 {% block extra_css %}
 <style>
     .page-header {
+        position: relative;
+        padding-top: 100px;
+        padding-bottom: 120px;
+        overflow: hidden;
         background-color: #dc3545;
         background-image: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+    }
+    
+    .wave-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
     }
     
     .delete-icon {
@@ -177,6 +195,32 @@
     
     .confirmation-form .form-control:valid:focus {
         box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .status-badge-active, 
+    .status-badge-published {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge-draft {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+    
+    .status-badge-cancelled {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    .status-badge-filled {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+    
+    .status-badge-completed {
+        background-color: rgba(23, 162, 184, 0.1);
+        color: #17a2b8;
     }
 </style>
 {% endblock %}
