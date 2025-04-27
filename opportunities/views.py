@@ -206,13 +206,9 @@ def application_list(request):
     user_profile = request.user.profile
 
     if user_profile.user_type == 'volunteer':
-        try:
-            volunteer_profile = user_profile.volunteer_profile
-            applications = volunteer_profile.applications.all().order_by('-created_at')
-            return render(request, 'opportunities/volunteer_application_list.html', {'applications': applications})
-        except:
-            messages.error(request, 'Please complete your volunteer profile first.')
-            return redirect('edit_volunteer_profile')
+        volunteer_profile = user_profile.volunteer_profile
+        applications = volunteer_profile.applications.all().order_by('-created_at')
+        return render(request, 'opportunities/volunteer_application_list.html', {'applications': applications})
 
     elif user_profile.user_type == 'organization':
         if not hasattr(user_profile, 'organization_profile'):
